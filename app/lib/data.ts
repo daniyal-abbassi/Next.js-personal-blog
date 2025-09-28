@@ -12,3 +12,13 @@ export async function getPosts(){
         throw new Error('database Error: Failed to get all posts.')
     }
 }
+
+export async function getTags() {
+    try {
+        const tags = await prisma.tag.findMany();
+        return tags;
+    } catch (error) {
+        console.error('Failed to get all posts: ',error);
+        throw new Error('database Error: Failed to get all posts.');
+    }
+}
