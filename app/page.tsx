@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { prisma } from "@/app/lib/prisma";
-import { EditPost } from "@/app/ui/buttons";
+import { DeletePost, EditPost } from "@/app/ui/buttons";
 import { Post } from "@prisma/client";
 
 interface PostProps {
@@ -26,7 +26,8 @@ export default async function Home() {
             <li key={post.post_id} className="border p-4 mb-5 rounded mt-5 ">
               <h2 className="text-xl font-semibold">{post.title}</h2>{" "}
               <div className="flex">
-              <EditPost id={post.post_id} />
+                <EditPost id={post.post_id} />
+
               </div>
               {post.content && (
                 <p className="text-sm text-gray-500">{post.content}</p>
@@ -40,6 +41,9 @@ export default async function Home() {
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-blue-800">
                   {lookupTag(post.tag_id)}
                 </span>
+              </div>
+              <div className="flex">
+                <DeletePost id={post.post_id}/>
               </div>
             </li>
           ))}
