@@ -100,7 +100,7 @@ export default function Form({ tags,post }: {tags: Tag[],post: Post}) {
 
       <input
         type="submit"
-        value="Create"
+        value="Update"
         className="border my-4 p-4 rounded block text-sm font-medium"
       />
     </form>
