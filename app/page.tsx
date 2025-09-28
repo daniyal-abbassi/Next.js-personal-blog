@@ -4,7 +4,13 @@ import {prisma} from "@/app/lib/prisma";
 export default async function Home() {
 
   const posts = await prisma.post.findMany();
-
+  const tags = await prisma.tag.findMany();
+  const lookupTag = (tagId : number) => {
+    let tagObject = tags.find((tag) => tag.tag_id === tagId);
+    
+    return tagObject ? tagObject.tag : 'No Tag';
+  }
+  
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
 
@@ -13,7 +19,13 @@ export default async function Home() {
             <li key={post.post_id} className="border p-4 mb-5 rounded mt-5 ">
               <h2 className="text-xl font-semibold">{post.title}</h2>
               {post.content && <p className="text-sm text-gray-500">{post.content}</p>}
-              <p className="text-sm text-gray-500"> Created: {new Date(post.created_at).toLocaleDateString()}</p>
+              <p className="text-sm text-yellow-500"> Created: {new Date(post.created_at).toLocaleDateString()}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white-600">Tags:</span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-blue-800">
+                  {lookupTag(post.tag_id)}
+                </span>
+              </div>
             </li>
           ))}
         </ul>)}
