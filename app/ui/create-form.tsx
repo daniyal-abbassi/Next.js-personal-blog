@@ -1,7 +1,13 @@
 
 
 
-export default function Form(){
+import { Tag } from '@prisma/client';
+
+interface FormProps {
+  tags: Tag[];
+}
+
+export default function Form({tags}: FormProps){
     return (
         <form>
             <label htmlFor="title" className="mb-2 block text-sm font-medium">Title: </label>
