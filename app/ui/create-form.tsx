@@ -7,7 +7,7 @@ interface FormProps {
 export default function Form({ tags }: FormProps) {
   return (
     <form>
-      <div className="border-gray-500 rounded-md p-4 md:p-6">
+      <div className="border border-gray-100 rounded-md p-4 md:p-6">
         {/* tags */}
         <div className="mb-4">
           <label
@@ -18,7 +18,7 @@ export default function Form({ tags }: FormProps) {
           </label>
           <div className="relative">
             <select
-              name="tagId"
+              name="tag"
               id="tag"
               className="block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 peer"
               defaultValue=""
@@ -34,16 +34,36 @@ export default function Form({ tags }: FormProps) {
             </select>
           </div>
         </div>
-      </div>
-      <label htmlFor="title" className="mb-2 block text-sm font-medium">
-        Title:{" "}
-      </label>
-      <input type="text" name="title" id="title" className="border" />
+        {/* title */}
+        <div className="mb-4">
+          <label htmlFor="title" className="mb-2 block text-sm font-medium">
+            Title:{" "}
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                type="text"
+                name="title"
+                id="title"
+                className="peer block w-full rounded-md  border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
+                placeholder="Enter title"
+              />
+            </div>
+          </div>
+        </div>
+        {/* content */}
+        <div className="mb-4">
 
-      <label htmlFor="content" className="mb-2 block text-sm font-medium">
-        Content:{" "}
-      </label>
-      <input type="text" name="content" id="content" className="border" />
+            <label htmlFor="content" className="mb-2 block text-sm font-medium">
+                Content:{" "}
+            </label>
+            <div className="relative">
+
+            <textarea name="content" id="content" className="border border-gray-200 rounded-md p-4 w-full text-sm outline-1" rows={8}></textarea>
+            </div>
+              
+        </div>
+      </div>
 
       <input
         type="submit"
