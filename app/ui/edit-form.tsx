@@ -1,17 +1,17 @@
 import { Tag,Post } from "@prisma/client";
-
+import { editPost } from "../lib/actions";
 interface FormProps {
   tags: Tag[];
   post: Post | null;
 }
 
-export default function Form({ tags,post }: FormProps) {
+export default function Form({ tags,post }: {tags: Tag[],post: Post}) {
   if (!post) {
     return <div>Post not found</div>;
   }
-  
+  const editPostById = editPost.bind(null, post.post_id);
   return (
-    <form>
+    <form action={editPostById}>
       <div className="border border-gray-100 rounded-md p-4 md:p-6">
         {/* tags */}
         <div className="mb-4">

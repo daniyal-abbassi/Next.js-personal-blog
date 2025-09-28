@@ -12,7 +12,30 @@ const FormSchema = z.object({
 });
 
 const CreatePost = FormSchema;
-
+export async function editPost(id: number,formData: FormData) {
+    const {author_id, tag_id, title, content, isPublished} = CreatePost.parse({
+        author_id: 1,
+        tag_id: formData.get("tag"),
+        title: formData.get("title"),
+        content: formData.get("content"),
+        isPublished: formData.get("publishStatus") === 'publish' ? true : false,
+    })
+    await prisma.post.update({
+        where: {
+            post_id: id
+        },
+        data: {
+            author_id: author_id,
+            title: title,
+            content: content,
+            isPublished: isPublished,
+            tag_id: tag_id,
+            updated_at: new Date(),
+        }
+    })
+    revalidatePath('/');
+    redirect('/');
+}
 export async function createPost(formData: FormData) {
     const {author_id, tag_id, title, content, isPublished} = CreatePost.parse({
         author_id: 1,
