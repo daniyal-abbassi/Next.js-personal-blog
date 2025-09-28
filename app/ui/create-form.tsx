@@ -53,16 +53,42 @@ export default function Form({ tags }: FormProps) {
         </div>
         {/* content */}
         <div className="mb-4">
-
-            <label htmlFor="content" className="mb-2 block text-sm font-medium">
-                Content:{" "}
-            </label>
-            <div className="relative">
-
-            <textarea name="content" id="content" className="border border-gray-200 rounded-md p-4 w-full text-sm outline-1" rows={8}></textarea>
-            </div>
-              
+          <label htmlFor="content" className="mb-2 block text-sm font-medium">
+            Content:{" "}
+          </label>
+          <div className="relative">
+            <textarea
+              name="content"
+              id="content"
+              className="border border-gray-200 rounded-md p-4 w-full text-sm outline-1"
+              rows={8}
+            ></textarea>
+          </div>
         </div>
+        {/* publish status */}
+        <fieldset>
+          <legend className="mb-2 block text-sm font-medium">
+                Publish or not ? 
+            </legend>
+            <div className="border border-gray-200 rounded-md bg-dark px-[14px] py-3 flex gap-4">
+                <div className="flex gap-4">
+                    <div className="flex items-center   ">
+                        <input type="radio" id="publish" name="publishStatus" value="publish" className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"/>
+                        <label htmlFor="publish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
+                            Publish
+                        </label>
+                    </div>
+                </div>
+                <div className="flex gap-4">
+                    <div className="flex items-center">
+                        <input type="radio" id="unPublish" name="publishStatus" value="unPublish" className="h-4 w-4 cursor-pointer border-gray-300 bg-blue-800 text-gray-600 focus:ring-2"/>
+                        <label htmlFor="unPublish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white-600">
+                            Un publish
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
       </div>
 
       <input
