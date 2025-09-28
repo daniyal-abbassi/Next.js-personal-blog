@@ -1,12 +1,12 @@
 import { Tag } from "@prisma/client";
-
+import { createPost } from "../lib/actions";
 interface FormProps {
   tags: Tag[];
 }
 
 export default function Form({ tags }: FormProps) {
   return (
-    <form>
+    <form action={createPost}>
       <div className="border border-gray-100 rounded-md p-4 md:p-6">
         {/* tags */}
         <div className="mb-4">
