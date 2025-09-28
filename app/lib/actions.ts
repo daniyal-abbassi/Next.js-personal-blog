@@ -12,6 +12,16 @@ const FormSchema = z.object({
 });
 
 const CreatePost = FormSchema;
+
+export async function deletePost(id: number) {
+    await prisma.post.delete({
+        where: {
+            post_id: id,
+        }
+    });
+    revalidatePath('/')
+}
+
 export async function editPost(id: number,formData: FormData) {
     const {author_id, tag_id, title, content, isPublished} = CreatePost.parse({
         author_id: 1,
