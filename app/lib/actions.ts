@@ -1,7 +1,8 @@
 "use server";
 import { z } from "zod";
 import {prisma} from "@/app/lib/prisma";
-
+import {revalidatePath} from 'next/cache';
+import { redirect } from "next/navigation";
 const FormSchema = z.object({
   title: z.string(),
   content: z.string(),
@@ -29,5 +30,7 @@ export async function createPost(formData: FormData) {
         isPublished: isPublished,
         updated_at: new Date(),
     }
-  })
+  });
+  revalidatePath('/');
+  redirect('/');
 }
