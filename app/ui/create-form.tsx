@@ -61,8 +61,17 @@ export default function Form({ tags }: FormProps) {
                 id="title"
                 className="peer block w-full rounded-md  border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 placeholder="Enter title"
+                aria-describedby="title-error"
               />
             </div>
+          </div>
+          <div id="title-error" aria-live="polite" aria-atomic="true">
+            {state.error?.title &&
+            state.error.title.map((error) => (
+              <p className="mt-2 text-sm text-red-500">
+                {error}
+              </p>
+            ))}
           </div>
         </div>
         {/* content */}
@@ -76,7 +85,16 @@ export default function Form({ tags }: FormProps) {
               id="content"
               className="border border-gray-200 rounded-md p-4 w-full text-sm outline-1"
               rows={8}
+              aria-describedby="content-error"
             ></textarea>
+          </div>
+          <div id="content-error" aria-live="polite" aria-atomic="true">
+            {state.error?.content && 
+            state.error.content.map((error) => (
+              <p className="mt-2 text-sm text-red-500">
+                {error}
+              </p>
+            ))}
           </div>
         </div>
         {/* publish status */}
@@ -87,7 +105,7 @@ export default function Form({ tags }: FormProps) {
             <div className="border border-gray-200 rounded-md bg-dark px-[14px] py-3 flex gap-4">
                 <div className="flex gap-4">
                     <div className="flex items-center   ">
-                        <input type="radio" id="publish" name="publishStatus" value="publish" className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"/>
+                        <input aria-describedby="publish-error" type="radio" id="publish" name="publishStatus" value="publish" className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"/>
                         <label htmlFor="publish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
                             Publish
                         </label>
@@ -95,16 +113,27 @@ export default function Form({ tags }: FormProps) {
                 </div>
                 <div className="flex gap-4">
                     <div className="flex items-center">
-                        <input type="radio" id="unPublish" name="publishStatus" value="unPublish" className="h-4 w-4 cursor-pointer border-gray-300 bg-blue-800 text-gray-600 focus:ring-2"/>
+                        <input aria-describedby="publish-error" type="radio" id="unPublish" name="publishStatus" value="unPublish" className="h-4 w-4 cursor-pointer border-gray-300 bg-blue-800 text-gray-600 focus:ring-2"/>
                         <label htmlFor="unPublish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white-600">
                             Un publish
                         </label>
                     </div>
                 </div>
+                <div id="publish-error" aria-live="polite" aria-atomic="true">
+                 {state.error?.isPublished && 
+            state.error.isPublished.map((error) => (
+              <p className="mt-2 text-sm text-red-500">
+                {error}
+              </p>
+            ))}
+                </div>
             </div>
         </fieldset>
-      </div>
 
+      </div>
+        {state.message && 
+          <p className="mt-2 text-sm text-red-500">{state.message}</p>
+        }
       <input
         type="submit"
         value="Create"
