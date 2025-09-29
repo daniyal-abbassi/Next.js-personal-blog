@@ -38,27 +38,42 @@ export async function deletePost(id: number) {
     revalidatePath('/')
 }
 
-export async function editPost(id: number,formData: FormData) {
-    const {author_id, tag_id, title, content, isPublished} = CreatePost.parse({
+export async function editPost(prevState: State,id: number,formData: FormData) {
+
+    const validatedFields = CreatePost.safeParse({
         author_id: 1,
         tag_id: formData.get("tag"),
         title: formData.get("title"),
         content: formData.get("content"),
         isPublished: formData.get("publishStatus") === 'publish' ? true : false,
     })
-    await prisma.post.update({
-        where: {
-            post_id: id
-        },
-        data: {
-            author_id: author_id,
-            title: title,
-            content: content,
-            isPublished: isPublished,
-            tag_id: tag_id,
-            updated_at: new Date(),
+    if(!validatedFields.success) {
+        return {
+            error: validatedFields.error.flatten().fieldErrors,
+            message: 'Check the form inputs again, something is missing!!!'
         }
-    })
+    }
+    const {author_id, tag_id, title, content, isPublished} = validatedFields.data;
+    try {
+        
+        await prisma.post.update({
+            where: {
+                post_id: id
+            },
+            data: {
+                author_id: author_id,
+                title: title,
+                content: content,
+                isPublished: isPublished,
+                tag_id: tag_id,
+                updated_at: new Date(),
+            }
+        })
+    } catch (error) {
+        return {
+            message: 'Database error: Failed to update the Post.'
+        }
+    }
     revalidatePath('/');
     redirect('/');
 }

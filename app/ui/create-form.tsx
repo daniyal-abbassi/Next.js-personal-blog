@@ -1,14 +1,14 @@
-'use client'
+"use client";
 import { Tag } from "@prisma/client";
-import { createPost,State } from "../lib/actions";
+import { createPost, State } from "../lib/actions";
 import { useActionState } from "react";
 interface FormProps {
   tags: Tag[];
 }
 
 export default function Form({ tags }: FormProps) {
-  const initialState : State = {message: null, errors: {}};
-  const [state, formAction] = useActionState(createPost,initialState)
+  const initialState: State = { message: null, errors: {} };
+  const [state, formAction] = useActionState(createPost, initialState);
 
   return (
     <form action={formAction}>
@@ -40,11 +40,9 @@ export default function Form({ tags }: FormProps) {
             </select>
           </div>
           <div id="tag-error" aria-live="polite" aria-atomic="true">
-            {state.error?.tag_id && 
+            {state.error?.tag_id &&
               state.error.tag_id.map((error: string) => (
-                <p className="mt-2 text-sm text-red-500">
-                  {error}
-                </p>
+                <p className="mt-2 text-sm text-red-500">{error}</p>
               ))}
           </div>
         </div>
@@ -67,11 +65,9 @@ export default function Form({ tags }: FormProps) {
           </div>
           <div id="title-error" aria-live="polite" aria-atomic="true">
             {state.error?.title &&
-            state.error.title.map((error) => (
-              <p className="mt-2 text-sm text-red-500">
-                {error}
-              </p>
-            ))}
+              state.error.title.map((error) => (
+                <p className="mt-2 text-sm text-red-500">{error}</p>
+              ))}
           </div>
         </div>
         {/* content */}
@@ -89,51 +85,66 @@ export default function Form({ tags }: FormProps) {
             ></textarea>
           </div>
           <div id="content-error" aria-live="polite" aria-atomic="true">
-            {state.error?.content && 
-            state.error.content.map((error) => (
-              <p className="mt-2 text-sm text-red-500">
-                {error}
-              </p>
-            ))}
+            {state.error?.content &&
+              state.error.content.map((error) => (
+                <p className="mt-2 text-sm text-red-500">{error}</p>
+              ))}
           </div>
         </div>
         {/* publish status */}
         <fieldset>
           <legend className="mb-2 block text-sm font-medium">
-                Publish or not ? 
-            </legend>
-            <div className="border border-gray-200 rounded-md bg-dark px-[14px] py-3 flex gap-4">
-                <div className="flex gap-4">
-                    <div className="flex items-center   ">
-                        <input aria-describedby="publish-error" type="radio" id="publish" name="publishStatus" value="publish" className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"/>
-                        <label htmlFor="publish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600">
-                            Publish
-                        </label>
-                    </div>
-                </div>
-                <div className="flex gap-4">
-                    <div className="flex items-center">
-                        <input aria-describedby="publish-error" type="radio" id="unPublish" name="publishStatus" value="unPublish" className="h-4 w-4 cursor-pointer border-gray-300 bg-blue-800 text-gray-600 focus:ring-2"/>
-                        <label htmlFor="unPublish" className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white-600">
-                            Un publish
-                        </label>
-                    </div>
-                </div>
-                <div id="publish-error" aria-live="polite" aria-atomic="true">
-                 {state.error?.isPublished && 
-            state.error.isPublished.map((error) => (
-              <p className="mt-2 text-sm text-red-500">
-                {error}
-              </p>
-            ))}
-                </div>
+            Publish or not ?
+          </legend>
+          <div className="border border-gray-200 rounded-md bg-dark px-[14px] py-3 flex gap-4">
+            <div className="flex gap-4">
+              <div className="flex items-center   ">
+                <input
+                  aria-describedby="publish-error"
+                  type="radio"
+                  id="publish"
+                  name="publishStatus"
+                  value="publish"
+                  className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
+                />
+                <label
+                  htmlFor="publish"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600"
+                >
+                  Publish
+                </label>
+              </div>
             </div>
+            <div className="flex gap-4">
+              <div className="flex items-center">
+                <input
+                  aria-describedby="publish-error"
+                  type="radio"
+                  id="unPublish"
+                  name="publishStatus"
+                  value="unPublish"
+                  className="h-4 w-4 cursor-pointer border-gray-300 bg-blue-800 text-gray-600 focus:ring-2"
+                />
+                <label
+                  htmlFor="unPublish"
+                  className="ml-2 flex cursor-pointer items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white-600"
+                >
+                  Un publish
+                </label>
+              </div>
+            </div>
+          </div>
         </fieldset>
-
+        <div id="publish-error" aria-live="polite" aria-atomic="true">
+          {state.error?.isPublished &&
+            state.error.isPublished.map((error) => (
+              <p className="mt-2 text-sm text-red-500">{error}</p>
+            ))}
+        </div>
       </div>
-        {state.message && 
-          <p className="mt-2 text-sm text-red-500">{state.message}</p>
-        }
+      {state.message && (
+        <p className="mt-2 text-sm text-red-500">{state.message}</p>
+      )}
       <input
         type="submit"
         value="Create"
