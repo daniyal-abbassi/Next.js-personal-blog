@@ -27,6 +27,7 @@ export default function Form({ tags }: FormProps) {
               id="tag"
               className="block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 peer"
               defaultValue=""
+              aria-describedby="tag-error"
             >
               <option value="" disabled>
                 Select a Tag
@@ -37,6 +38,14 @@ export default function Form({ tags }: FormProps) {
                 </option>
               ))}
             </select>
+          </div>
+          <div id="tag-error" aria-live="polite" aria-atomic="true">
+            {state.error?.tag_id && 
+              state.error.tag_id.map((error: string) => (
+                <p className="mt-2 text-sm text-red-500">
+                  {error}
+                </p>
+              ))}
           </div>
         </div>
         {/* title */}
