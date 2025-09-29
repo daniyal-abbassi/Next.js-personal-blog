@@ -1,12 +1,17 @@
+'use client'
 import { Tag } from "@prisma/client";
-import { createPost } from "../lib/actions";
+import { createPost,State } from "../lib/actions";
+import { useActionState } from "react";
 interface FormProps {
   tags: Tag[];
 }
 
 export default function Form({ tags }: FormProps) {
+  const initialState : State = {message: null, errors: {}};
+  const [state, formAction] = useActionState(createPost,initialState)
+
   return (
-    <form action={createPost}>
+    <form action={formAction}>
       <div className="border border-gray-100 rounded-md p-4 md:p-6">
         {/* tags */}
         <div className="mb-4">

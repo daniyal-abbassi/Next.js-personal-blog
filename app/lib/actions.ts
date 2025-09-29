@@ -21,8 +21,8 @@ export type State = {
     errors?: {
         title?: string[];
         content?: string[];
-        isPublished: string[];
-        tag_id: string[]
+        isPublished?: string[];
+        tag_id?: string[]
     };
     message?: string | null;
 }
