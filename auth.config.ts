@@ -19,4 +19,4 @@ export const authConfig = {
         }
     },
     providers: [],
-} satisfies NextAuthConfig;
+} satisfies NextAuthConfig; //typeScript type check sefaty
