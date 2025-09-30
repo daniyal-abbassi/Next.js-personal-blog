@@ -4,9 +4,11 @@ import { editPost, State } from "../lib/actions";
 import { useActionState } from "react";
 
 export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
-  const editPostById = editPost.bind(null, post.post_id);
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState(initialState, editPostById);
+  const [state, formAction] = useActionState(
+    editPost.bind(null, post.post_id),
+    initialState
+  );
   if (!post) {
     return <div>Post not found</div>;
   }
@@ -42,8 +44,8 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
             </select>
           </div>
           <div id="tag-error" aria-live="polite" aria-atomic="true">
-            {state.error?.tag_id &&
-              state.error.tag_id.map((error: string) => (
+            {state.errors?.tag_id &&
+              state.errors.tag_id.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500">{error}</p>
               ))}
           </div>
@@ -67,8 +69,8 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
             </div>
           </div>
           <div id="title-error" aria-live="polite" aria-atomic="true">
-            {state.error?.title &&
-              state.error.title.map((error) => (
+            {state.errors?.title &&
+              state.errors.title.map((error) => (
                 <p className="mt-2 text-sm text-red-500">{error}</p>
               ))}
           </div>
@@ -89,8 +91,8 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
             ></textarea>
           </div>
           <div id="content-error" aria-live="polite" aria-atomic="true">
-            {state.error?.content &&
-              state.error.content.map((error) => (
+            {state.errors?.content &&
+              state.errors.content.map((error) => (
                 <p className="mt-2 text-sm text-red-500">{error}</p>
               ))}
           </div>
@@ -142,8 +144,8 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
           </div>
         </fieldset>
         <div id="publish-error" aria-live="polite" aria-atomic="true">
-          {state.error?.isPublished &&
-            state.error.isPublished.map((error) => (
+          {state.errors?.isPublished &&
+            state.errors.isPublished.map((error) => (
               <p className="mt-2 text-sm text-red-500">{error}</p>
             ))}
         </div>

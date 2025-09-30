@@ -4,17 +4,11 @@ import {prisma} from "@/app/lib/prisma";
 import {revalidatePath} from 'next/cache';
 import { redirect } from "next/navigation";
 const FormSchema = z.object({
-  title: z.string({
-    error: 'A post cannot publish without a title.',
-  }),
-  content: z.string({
-    error: 'A post should contain something atleast!'
-  }),
+  title: z.string().min(1, 'A post cannot publish without a title.'),
+  content: z.string().min(1, 'A post should contain something atleast!'),
   author_id: z.number(),
-  isPublished: z.boolean({
-    error: 'Publish it or not already?'
-  }),
-  tag_id: z.coerce.number().gt(0, {error: 'Should select a tag atleast!'}),
+  isPublished: z.boolean(),
+  tag_id: z.coerce.number().gt(0, 'Should select a tag atleast!'),
 });
 
 export type State = {
@@ -38,7 +32,7 @@ export async function deletePost(id: number) {
     revalidatePath('/')
 }
 
-export async function editPost(prevState: State,id: number,formData: FormData) {
+export async function editPost(id: number, prevState: State, formData: FormData) {
 
     const validatedFields = CreatePost.safeParse({
         author_id: 1,
@@ -49,7 +43,7 @@ export async function editPost(prevState: State,id: number,formData: FormData) {
     })
     if(!validatedFields.success) {
         return {
-            error: validatedFields.error.flatten().fieldErrors,
+            errors: validatedFields.error.flatten().fieldErrors,
             message: 'Check the form inputs again, something is missing!!!'
         }
     }
@@ -70,6 +64,7 @@ export async function editPost(prevState: State,id: number,formData: FormData) {
             }
         })
     } catch (error) {
+        console.log('database error: ',error)
         return {
             message: 'Database error: Failed to update the Post.'
         }
@@ -87,7 +82,7 @@ export async function createPost(prevState: State,formData: FormData) {
     })
     if(!validatedFields.success) {
         return {
-            error: validatedFields.error.flatten().fieldErrors,
+            errors: validatedFields.error.flatten().fieldErrors,
             message: 'Check the form inputs again, something is missing!!!'
         }
     }
