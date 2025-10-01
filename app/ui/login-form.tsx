@@ -15,18 +15,18 @@ export default function LoginForm() {
 
   return (
     <form action={formAction}>
-      <div className="flex">
-        <div className="flex">
+      <div>
+        <div className="flex mb-4">
           <label htmlFor="username">username</label>
-          <input type="text" name="username" id="username" required />
+          <input type="text" name="username" id="username" required className="border rounded-md w-[140px] mx-5"/>
         </div>
         <div className="flex">
           <label htmlFor="password">Password</label>
-          <input type="password" name="password" id="password" required />
+          <input className="border rounded-md w-[140px] mx-5" type="password" name="password" id="password" required />
         </div>
       </div>
       <input type="hidden" name="redirectTo" value={callbackUrl} />
-      <button className="mt-4 w-full" aria-disabled={isPending}>
+      <button className="mt-4 w-30 px-5 border rounded-md flex items-center justify-center gap-3  grow" aria-disabled={isPending}>
         Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-100" />
       </button>
       <div
