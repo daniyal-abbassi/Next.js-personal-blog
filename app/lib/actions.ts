@@ -3,7 +3,7 @@ import { z } from "zod";
 import {prisma} from "@/app/lib/prisma";
 import {revalidatePath} from 'next/cache';
 import { redirect } from "next/navigation";
-import { signIn } from "@/auth";
+import { signIn, auth } from "@/auth";
 import { AuthError } from "next-auth";
 
 
@@ -53,6 +53,12 @@ export type State = {
 const CreatePost = FormSchema;
 // Delete post function
 export async function deletePost(id: number) {
+    const session = await auth();
+    
+    if (!session?.user) {
+        throw new Error('Unauthorized: You must be logged in to delete posts');
+    }
+    
     await prisma.post.delete({
         where: {
             post_id: id,

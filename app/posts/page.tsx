@@ -2,7 +2,7 @@ import Image from "next/image";
 import { prisma } from "@/app/lib/prisma";
 import { DeletePost, EditPost } from "@/app/ui/buttons";
 import { Post } from "@prisma/client";
-import { signOut } from "@/auth";
+import { signOut, auth } from "@/auth";
 import { PowerIcon } from "@heroicons/react/24/outline";
 
 interface PostProps {
@@ -10,6 +10,7 @@ interface PostProps {
 }
 
 export default async function Home() {
+  const session = await auth();
   const posts = await prisma.post.findMany();
   const tags = await prisma.tag.findMany();
   const lookupTag = (tagId: number) => {
@@ -43,9 +44,11 @@ export default async function Home() {
                   {lookupTag(post.tag_id)}
                 </span>
               </div>
-              <div className="flex">
-                <DeletePost id={post.post_id} />
-              </div>
+              {session?.user && (
+                <div className="flex">
+                  <DeletePost id={post.post_id} />
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -97,17 +100,20 @@ export default async function Home() {
           />
           Go to nextjs.org →
         </a>
+        {session?.user &&
+        
         <form
-          action={async () => {
-            "use server";
-            await signOut({ redirectTo: "/posts" });
-          }}
+        action={async () => {
+          "use server";
+          await signOut({ redirectTo: "/posts" });
+        }}
         >
           <button className="flex h-[28px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-500 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 hover:cursor-pointer md:flex-none md:justify-start md:p-2 md:px-3">
             <PowerIcon className="w-6" />
             <div className="hidden md:block">Sign Out</div>
           </button>
         </form>
+        }
       </footer>
     </div>
   );
