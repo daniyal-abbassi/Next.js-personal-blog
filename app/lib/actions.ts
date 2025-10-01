@@ -3,6 +3,34 @@ import { z } from "zod";
 import {prisma} from "@/app/lib/prisma";
 import {revalidatePath} from 'next/cache';
 import { redirect } from "next/navigation";
+import { signIn } from "@/auth";
+import { AuthError } from "next-auth";
+
+
+
+
+export async function authenticate(
+    prevState: string | undefined,
+    formData: FormData
+) {
+    try {
+        await signIn('credentials',formData);
+    } catch (error) {
+        if(error instanceof AuthError) {
+            switch(error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid credentials';
+                default:
+                    return 'Somthing went wrong!'
+            }
+        }
+        throw error;
+    } //catch block
+}
+
+
+
+// Validate Object
 const FormSchema = z.object({
   title: z.string().min(1, 'A post cannot publish without a title.'),
   content: z.string().min(1, 'A post should contain something atleast!'),
@@ -11,6 +39,7 @@ const FormSchema = z.object({
   tag_id: z.coerce.number().gt(0, 'Should select a tag atleast!'),
 });
 
+// State type
 export type State = {
     errors?: {
         title?: string[];
@@ -22,7 +51,7 @@ export type State = {
 }
 
 const CreatePost = FormSchema;
-
+// Delete post function
 export async function deletePost(id: number) {
     await prisma.post.delete({
         where: {
@@ -31,7 +60,7 @@ export async function deletePost(id: number) {
     });
     revalidatePath('/')
 }
-
+// Update/Edit post function
 export async function editPost(id: number, prevState: State, formData: FormData) {
 
     const validatedFields = CreatePost.safeParse({
@@ -72,6 +101,7 @@ export async function editPost(id: number, prevState: State, formData: FormData)
     revalidatePath('/');
     redirect('/');
 }
+// Create post function
 export async function createPost(prevState: State,formData: FormData) {
     const validatedFields = CreatePost.safeParse({ //this will return an object wheather success or error
         author_id: 1,
