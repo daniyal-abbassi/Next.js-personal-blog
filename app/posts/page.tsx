@@ -100,7 +100,7 @@ export default async function Home() {
         <form
           action={async () => {
             "use server";
-            await signOut({ redirectTo: "/" });
+            await signOut({ redirectTo: "/posts" });
           }}
         >
           <button className="flex h-[28px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-500 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 hover:cursor-pointer md:flex-none md:justify-start md:p-2 md:px-3">

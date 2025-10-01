@@ -58,7 +58,7 @@ export async function deletePost(id: number) {
             post_id: id,
         }
     });
-    revalidatePath('/')
+    revalidatePath('/posts')
 }
 // Update/Edit post function
 export async function editPost(id: number, prevState: State, formData: FormData) {
@@ -98,8 +98,8 @@ export async function editPost(id: number, prevState: State, formData: FormData)
             message: 'Database error: Failed to update the Post.'
         }
     }
-    revalidatePath('/');
-    redirect('/');
+    revalidatePath('/posts');
+    redirect('/posts');
 }
 // Create post function
 export async function createPost(prevState: State,formData: FormData) {
@@ -134,6 +134,6 @@ export async function createPost(prevState: State,formData: FormData) {
             message: 'Database error: Failed to create Post.'
         }        
     }
-  revalidatePath('/');
-  redirect('/');
+  revalidatePath('/posts');
+  redirect('/posts');
 }

@@ -7,7 +7,7 @@ import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/create";
+  const callbackUrl = searchParams.get("callbackUrl") || "/posts";
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
     undefined
