@@ -10,7 +10,7 @@ export default function Form({ tags }: FormProps) {
   const initialState: State = { message: null, errors: {} };
   const [state, formAction] = useActionState(createPost, initialState);
 
-  return (
+    return (
     <form action={formAction}>
       <div className="border border-gray-100 rounded-md p-4 md:p-6">
         {/* tags */}
@@ -150,6 +150,6 @@ export default function Form({ tags }: FormProps) {
         value="Create"
         className="border my-4 p-4 rounded block text-sm font-medium"
       />
-    </form>
+        </form>
   );
 }
