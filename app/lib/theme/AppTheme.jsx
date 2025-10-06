@@ -1,11 +1,12 @@
+'use client';
 import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
-import { inputsCustomizations } from './customizations/inputs';
-import { dataDisplayCustomizations } from './customizations/dataDisplay';
-import { feedbackCustomizations } from './customizations/feedback';
-import { navigationCustomizations } from './customizations/navigation';
-import { surfacesCustomizations } from './customizations/surfaces';
+import { inputsCustomizations } from '@/app/lib/theme/customization/inputs';
+import { dataDisplayCustomizations } from '@/app/lib/theme/customization/dataDisplay';
+import { feedbackCustomizations } from '@/app/lib/theme/customization/feedback';
+import { navigationCustomizations } from '@/app/lib/theme/customization/navigation';
+import { surfacesCustomizations } from '@/app/lib/theme/customization/surfaces';
 import { colorSchemes, typography, shadows, shape } from './themePrimitives';
 import { useMemo } from 'react';
 

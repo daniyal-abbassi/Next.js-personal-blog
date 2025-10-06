@@ -1,8 +1,10 @@
-import {AppRouterCacheProvider} from '@mui/material-nextjs';
+import {AppRouterCacheProvider} from '@mui/material-nextjs/v15-appRouter';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
+import AppTheme from '@/app/lib/theme/AppTheme';
+import CssBaseline from '@mui/material/CssBaseline';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,12 +26,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <InitColorSchemeScript attribute='data-mui-color-scheme' />
         <AppRouterCacheProvider>
-        {children}
+          <AppTheme>
+            <CssBaseline enableColorScheme>
+            {children}
+
+            </CssBaseline>
+
+          </AppTheme>
         </AppRouterCacheProvider>
       </body>
     </html>
