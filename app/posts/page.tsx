@@ -1,3 +1,4 @@
+import DOMPurify from "dompurify";
 import Image from "next/image";
 import { prisma } from "@/app/lib/prisma";
 import { DeletePost, EditPost } from "@/app/ui/buttons";
@@ -12,13 +13,18 @@ import { StyledLink, StyledTypography, SyledCard, SyledCardContent } from "../ui
 import CardMedia from "@mui/material/CardMedia";
 import { Author } from "../components/public/mainContent/Author";
 import Chip from "@mui/material/Chip";
+import { getPosts, getTags } from "../lib/data";
+import { TagFilter } from "../components/public/mainContent/TagFilter";
 
 interface PostProps {
   post: Post[];
 }
 
-export default async function Home() {
-
+export default async function Home({searchParams}:{searchParams?: {search?:string,tag?:string}}) {
+  const search = searchParams?.search || "";
+  const tag = searchParams?.tag || "";
+  const displayedPosts = await getPosts(search,tag);
+  const tags = await getTags();
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -42,65 +48,7 @@ export default async function Home() {
     </Box>
 
     {/* TAGS BOX */}
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: { xs: "column-reverse", md: "row" },
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: { xs: "start", md: "center" },
-        gap: 4,
-        overflow: "auto",
-      }}
-    >
-      {/* TAG-BOX */}
-      <Box
-        sx={{
-          display: "inline-flex",
-          flexDirection: "row",
-          gap: 3,
-          overflow: "auto",
-        }}
-      >
-        {/* EACH SINGLE TAG */}
-        <Chip
-          onClick={() => handleClick("All categories")}
-          size="medium"
-          label="All categories"
-          color={activeTag === "All categories" ? "primary" : "default"}
-          variant={activeTag === "All categories" ? "filled" : "outlined"}
-        />
-        {/* render specific tag */}
-        {tags && tags.length > 0
-          ? tags.map((tag, i) => (
-              <Chip
-                key={i}
-                onClick={() => handleClick(tag)}
-                size="medium"
-                label={tag}
-                color={activeTag === tag ? "primary" : "default"}
-                variant={activeTag === tag ? "filled" : "outlined"}
-                // sx={{
-                //   backgroundColor: "transparent",
-                //   border: "none",
-                // }}
-              />
-            ))
-          : null}
-      </Box>
-      {/* SEARCH-SECTION */}
-      <Box
-        sx={{
-          display: { xs: "none", sm: "flex" },
-          flexDirection: "row",
-          gap: 1,
-          width: { xs: "100%", md: "fit-content" },
-          overflow: "auto",
-        }}
-      >
-        <Search />
-      </Box>
-    </Box>
+    <TagFilter tags={tags} />
 
     {/* POSTS GRID */}
     {/* POSTS GRID - Rendering maximum 6 posts with fixed layout */}
@@ -109,7 +57,7 @@ export default async function Home() {
       {displayedPosts[0] && (
         <Grid item size={{ xs: 12, md: 6 }} key={displayedPosts[0].post_id}>
           {/* navigate to specific post*/}
-          <StyledLink to={`/post/${displayedPosts[0].post_id}`}>
+          <StyledLink href={`/post/${displayedPosts[0].post_id}`}>
             <SyledCard
               variant="outlined"
               onFocus={() => handleFocus(0)} // Index 0
@@ -158,7 +106,7 @@ export default async function Home() {
       {/* Post 1 (Top Right) - md={6} */}
       {displayedPosts[1] && (
         <Grid item size={{ xs: 12, md: 6 }} key={displayedPosts[1].post_id}>
-          <StyledLink to={`/post/${displayedPosts[1].post_id}`}>
+          <StyledLink href={`/post/${displayedPosts[1].post_id}`}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(1)} // Index 1
@@ -207,7 +155,7 @@ export default async function Home() {
       {/* Post 2 (Middle Left) - md={4} */}
       {displayedPosts[2] && (
         <Grid item size={{ xs: 12, md: 4 }} key={displayedPosts[2].post_id}>
-          <StyledLink to={`/post/${displayedPosts[2].post_id}`}>
+          <StyledLink href={`/post/${displayedPosts[2].post_id}`}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(2)} // Index 2
@@ -268,7 +216,7 @@ export default async function Home() {
             }}
           >
             {/* Card for Post 3 (Above) - No Image */}
-            <StyledLink to={`/post/${displayedPosts[3].post_id}`}>
+            <StyledLink href={`/post/${displayedPosts[3].post_id}`}>
             <SyledCard
               variant="outlined"
               onFocus={() => handleFocus(3)} // Index 3
@@ -314,7 +262,7 @@ export default async function Home() {
             </SyledCard>
               </StyledLink>
             {/* Card for Post 4 (Below) - No Image */}
-            <StyledLink to={`/post/${displayedPosts[4].post_id}`}>
+            <StyledLink href={`/post/${displayedPosts[4].post_id}`}>
             <SyledCard
               variant="outlined"
               onFocus={() => handleFocus(4)} // Index 4
@@ -366,7 +314,7 @@ export default async function Home() {
       {/* Post 5 (Middle Right / Bottom Left) - md={4} */}
       {displayedPosts[5] && (
         <Grid item size={{ xs: 12, md: 4 }} key={displayedPosts[5].post_id}>
-          <StyledLink to={`/post/${displayedPosts[5].post_id}`}>
+          <StyledLink href={`/post/${displayedPosts[5].post_id}`}>
           <SyledCard
             variant="outlined"
             onFocus={() => handleFocus(5)} // Index 5

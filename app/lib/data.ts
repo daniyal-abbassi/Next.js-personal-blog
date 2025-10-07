@@ -3,21 +3,28 @@ import { Prisma } from "@prisma/client";
 
 
 
-export async function getPosts(search?:string){
+export async function getPosts(search?:string,tag?:string){
     try {
-        const whereClause = search ? {
-            OR: [
+        const whereClause : Prisma.PostWhereInput = {
+            isPublished: true,
+        };
+
+
+        if(search) {
+            whereClause.OR = [
                 {title: {contains: search, mode: Prisma.QueryMode.insensitive}},
                 {content: {contains: search, mode: Prisma.QueryMode.insensitive}},
-            ],
-        } 
-        : {};
+            ]
+        };
+
+        if(tag && tag !== 'All categories') {
+            whereClause.Tag = {
+                tag: {equals: tag},
+            }
+        }
 
         const posts = await prisma.post.findMany({
-            where: {
-                ...whereClause,
-                isPublished: true,
-            },
+            where: whereClause,
             include: {
                 User: true,
                 Tag: true,
