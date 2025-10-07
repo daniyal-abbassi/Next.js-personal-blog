@@ -1,10 +1,29 @@
 import {prisma} from "@/app/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 
 
-export async function getPosts(){
+export async function getPosts(search?:string){
     try {
-        const posts = await prisma.post.findMany();
+        const whereClause = search ? {
+            OR: [
+                {title: {contains: search, mode: Prisma.QueryMode.insensitive}},
+                {content: {contains: search, mode: Prisma.QueryMode.insensitive}},
+            ],
+        } 
+        : {};
+
+        const posts = await prisma.post.findMany({
+            where: {
+                ...whereClause,
+                isPublished: true,
+            },
+            include: {
+                User: true,
+                Tag: true,
+            },
+            orderBy: {created_at: 'desc'}
+        });
         return posts;
         
     } catch (error) {
