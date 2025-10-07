@@ -16,6 +16,7 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
     "@mui/material-nextjs": "^7.3.3",
+    "@mui/system": "^7.3.3",
     "@prisma/client": "^6.15.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.2",
