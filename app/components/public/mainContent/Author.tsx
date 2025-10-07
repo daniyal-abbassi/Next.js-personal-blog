@@ -7,7 +7,7 @@ import { format } from "date-fns";
 
 
 
-function Author({ author,date }:{author: string,date: Date}) {
+export function Author({ author,date }:{author: string,date: Date}) {
     return (
       <Box
         sx={{
