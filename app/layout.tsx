@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppTheme from '@/app/lib/theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
+import AppAppBar from './components/public/AppBar';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,6 +35,7 @@ export default function RootLayout({
         <AppRouterCacheProvider>
           <AppTheme>
             <CssBaseline enableColorScheme>
+              <AppAppBar />
             {children}
 
             </CssBaseline>

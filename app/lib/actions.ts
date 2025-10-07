@@ -6,8 +6,11 @@ import { redirect } from "next/navigation";
 import { signIn, auth } from "@/auth";
 import { AuthError } from "next-auth";
 
+import { signOut } from "@/auth";
 
-
+export async function handleSignOut() {
+    await signOut({redirectTo: '/'})
+}
 
 export async function authenticate(
     prevState: string | undefined,

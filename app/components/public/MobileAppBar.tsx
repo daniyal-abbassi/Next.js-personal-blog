@@ -10,6 +10,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ColorModeIconDropdown from "@/app/lib/theme/ColorModeIconDropdown";
 import { useState } from "react";
 import Link from "next/link";
+import { handleSignOut } from "@/app/lib/actions";
 
 export default function MobileAppBar({ session }: { session: any }) {
   const [open, setOpen] = useState(false);
@@ -54,10 +55,7 @@ export default function MobileAppBar({ session }: { session: any }) {
             <>
               <MenuItem>
                 <form
-                  action={async () => {
-                    "use server";
-                    await (await import("@/auth")).signOut({ redirectTo: "/" });
-                  }}
+                  action={handleSignOut}
                   style={{ width: "100%" }}
                 >
                   <Button color="primary" variant="contained" fullWidth>
