@@ -9,7 +9,7 @@ import ColorModeIconDropdown from "@/app/lib/theme/ColorModeIconDropdown";
 import Link from "next/link";
 import { signOut, auth } from "@/auth";
 import MobileAppBar from "./MobileAppBar";
-import { StyledToolbar } from "@/app/ui/styledToolbar";
+import { StyledToolbar } from "@/app/ui/styledThemes";
 import { handleSignOut } from "@/app/lib/actions";
 
 
