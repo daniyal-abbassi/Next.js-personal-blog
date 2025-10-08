@@ -1,378 +1,236 @@
-import DOMPurify from "dompurify";
-import Image from "next/image";
-import { prisma } from "@/app/lib/prisma";
-import { DeletePost, EditPost } from "@/app/ui/buttons";
-import { Post } from "@prisma/client";
-import { signOut, auth } from "@/auth";
-import { PowerIcon } from "@heroicons/react/24/outline";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Search } from "../components/public/mainContent/Search";
-import Grid from "@mui/material/Grid";
-import { StyledLink, StyledTypography, SyledCard, SyledCardContent } from "../ui/styledThemes";
-import CardMedia from "@mui/material/CardMedia";
-import { Author } from "../components/public/mainContent/Author";
-import Chip from "@mui/material/Chip";
+import { Grid } from "@mui/material";
 import { getPosts, getTags } from "../lib/data";
 import { TagFilter } from "../components/public/mainContent/TagFilter";
+import { PostCard } from "../components/public/mainContent/PostCard";
 
-interface PostProps {
-  post: Post[];
-}
+// Define the post type based on the getPosts return type
+type PostWithRelations = {
+  post_id: number;
+  title: string;
+  content: string | null;
+  url: string | null;
+  created_at: Date;
+  updated_at: Date;
+  author_id: number;
+  isPublished: boolean;
+  coudinaryId: string | null;
+  tag_id: number;
+  Tag: {
+    tag_id: number;
+    tag: string;
+  } | null;
+  User: {
+    user_id: number;
+    username: string;
+    password: string;
+  } | null;
+};
 
-export default async function Home({searchParams}:{searchParams?: {search?:string,tag?:string}}) {
-  const search = searchParams?.search || "";
-  const tag = searchParams?.tag || "";
-  const displayedPosts = await getPosts(search,tag);
+export default async function Home(props: {
+  searchParams?: Promise<{ search?: string; tag?: string }>;
+}) {
+  const prop = await props.searchParams;
+  const search = prop?.search || "";
+  const tag = prop?.tag || "";
+  const displayedPosts = await getPosts(search, tag);
   const tags = await getTags();
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
-    <div>
-      <Typography variant="h1" gutterBottom>
-        Personal Blog
-      </Typography>
-      <Typography>Fail, Fail Again, Fail Better</Typography>
-    </div>
-    {/* SEARCH BOX */}
-    <Box
-      sx={{
-        display: { xs: "flex", sm: "none" },
-        flexDirection: "row",
-        gap: 1,
-        width: { xs: "100%", md: "fit-content" },
-        overflow: "auto",
-      }}
-    >
-      <Search />
-    </Box>
+      <div>
+        <Typography variant="h1" gutterBottom>
+          Personal Blog
+        </Typography>
+        <Typography>Fail, Fail Again, Fail Better</Typography>
+      </div>
+      {/* SEARCH BOX */}
 
-    {/* TAGS BOX */}
-    <TagFilter tags={tags} />
-
-    {/* POSTS GRID */}
-    {/* POSTS GRID - Rendering maximum 6 posts with fixed layout */}
-    <Grid container spacing={2} columns={12}>
-      {/* Post 0 (Top Left) - md={6} */}
-      {displayedPosts[0] && (
-        <Grid item size={{ xs: 12, md: 6 }} key={displayedPosts[0].post_id}>
-          {/* navigate to specific post*/}
-          <StyledLink href={`/post/${displayedPosts[0].post_id}`}>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(0)} // Index 0
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 0 ? "Mui-focused" : ""}
-            >
-              {displayedPosts[0].url && (
-                <CardMedia
-                  component="img"
-                  alt={displayedPosts[0].title}
-                  image={displayedPosts[0].url}
-                  sx={{
+      <Box
+        sx={{
+          display: { xs: "flex", sm: "none" },
+          flexDirection: "row",
+          gap: 1,
+          width: { xs: "100%", md: "fit-content" },
+          overflow: "auto",
+        }}
+      >
+        <Search />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column-reverse", md: "row" },
+          width: "100%",
+          justifyContent: "space-between",
+          alignItems: { xs: "start", md: "center" },
+          gap: 4,
+          overflow: "auto",
+        }}
+      >
+        {/* TAGS BOX */}
+        <TagFilter tags={tags} />
+        <Box
+          sx={{
+            display: { xs: "none", sm: "flex" },
+            flexDirection: "row",
+            gap: 1,
+            width: { xs: "100%", md: "fit-content" },
+            overflow: "auto",
+          }}
+        >
+          <Search />
+        </Box>
+      </Box>
+      {/* POSTS GRID - Using .map() while maintaining the same layout */}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "1fr",
+            md: "repeat(12, 1fr)",
+          },
+          gap: 2,
+        }}
+      >
+        {displayedPosts.slice(0, 6).map((post, index) => {
+          // Define grid layout based on index to maintain the same visual structure
+          const getGridConfig = (index: number) => {
+            switch (index) {
+              case 0: // Top Left - Large card
+                return {
+                  gridColumn: { xs: "1", md: "1 / 7" },
+                  cardSx: {},
+                  mediaSx: {
                     aspectRatio: "16 / 9",
                     borderBottom: "1px solid",
                     borderColor: "divider",
-                  }}
-                />
-              )}
-              <SyledCardContent>
-                {displayedPosts[0].tag && displayedPosts[0].tag.tag && (
-                  <Typography gutterBottom variant="caption" component="div">
-                    {displayedPosts[0].tag.tag}
-                  </Typography>
-                )}
-                <Typography gutterBottom variant="h6" component="div">
-                  {displayedPosts[0].title}
-                </Typography>
-                <StyledTypography
-                  variant="body2"
-                  color="text.secondary"
-                  gutterBottom
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(displayedPosts[0].content)
-                  }}
-                />
-              </SyledCardContent>
-              {displayedPosts[0].author && (
-                <Author author={displayedPosts[0].author.username} date={displayedPosts[0].created_at}/>
-              )}
-            </SyledCard>
-          </StyledLink>
-        </Grid>
-      )}
+                  },
+                  showImage: true,
+                };
+              case 1: // Top Right - Large card
+                return {
+                  gridColumn: { xs: "1", md: "7 / 13" },
+                  cardSx: {},
+                  mediaSx: {
+                    aspectRatio: "16 / 9",
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                  },
+                  showImage: true,
+                };
+              case 2: // Middle Left - Medium card with image
+                return {
+                  gridColumn: { xs: "1", md: "1 / 5" },
+                  cardSx: { height: "100%" },
+                  mediaSx: {
+                    height: { sm: "auto", md: "50%" },
+                    aspectRatio: { sm: "16 / 9", md: "" },
+                  },
+                  showImage: true,
+                };
+              case 3: // Middle Center - Stacked with post 4
+                return {
+                  gridColumn: { xs: "1", md: "5 / 9" },
+                  cardSx: {
+                    height: "100%",
+                    contentSx: {
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "100%",
+                    },
+                  },
+                  mediaSx: {},
+                  showImage: false,
+                  isStacked: true,
+                  stackedWith: 4,
+                };
+              case 4: // Middle Center - Stacked with post 3 (handled in case 3)
+                return null; // This will be rendered as part of case 3
+              case 5: // Middle Right - Medium card with image
+                return {
+                  gridColumn: { xs: "1", md: "9 / 13" },
+                  cardSx: { height: "100%" },
+                  mediaSx: {
+                    height: { sm: "auto", md: "50%" },
+                    aspectRatio: { sm: "16 / 9", md: "" },
+                  },
+                  showImage: true,
+                };
+              default:
+                return {
+                  gridColumn: { xs: "1", md: "1 / 5" },
+                  cardSx: { height: "100%" },
+                  mediaSx: {
+                    aspectRatio: "16 / 9",
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                  },
+                  showImage: true,
+                };
+            }
+          };
 
-      {/* Post 1 (Top Right) - md={6} */}
-      {displayedPosts[1] && (
-        <Grid item size={{ xs: 12, md: 6 }} key={displayedPosts[1].post_id}>
-          <StyledLink href={`/post/${displayedPosts[1].post_id}`}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(1)} // Index 1
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 1 ? "Mui-focused" : ""}
-          >
-            {displayedPosts[1].url && (
-              <CardMedia
-                component="img"
-                alt={displayedPosts[1].title}
-                image={displayedPosts[1].url}
-                aspect-ratio="16 / 9"
-                sx={{
-                  borderBottom: "1px solid",
-                  borderColor: "divider",
-                }}
-              />
-            )}
-            <SyledCardContent>
-              {displayedPosts[1].tag && displayedPosts[1].tag.tag && (
-                <Typography gutterBottom variant="caption" component="div">
-                  {displayedPosts[1].tag.tag}
-                </Typography>
-              )}
-              <Typography gutterBottom variant="h6" component="div">
-                {displayedPosts[1].title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(displayedPosts[1].content)
-                }}
-              />
-            </SyledCardContent>
-            {displayedPosts[1].author && (
-              <Author author={displayedPosts[1].author.username} date={displayedPosts[1].created_at}/>
-            )}
-          </SyledCard>
-          </StyledLink>
-        </Grid>
-      )}
+          const config = getGridConfig(index);
 
-      {/* Post 2 (Middle Left) - md={4} */}
-      {displayedPosts[2] && (
-        <Grid item size={{ xs: 12, md: 4 }} key={displayedPosts[2].post_id}>
-          <StyledLink href={`/post/${displayedPosts[2].post_id}`}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(2)} // Index 2
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 2 ? "Mui-focused" : ""}
-            sx={{ height: "100%" }}
-          >
-            {displayedPosts[2].url && (
-              <CardMedia
-                component="img"
-                alt={displayedPosts[2].title}
-                image={displayedPosts[2].url}
-                sx={{
-                  height: { sm: "auto", md: "50%" },
-                  aspectRatio: { sm: "16 / 9", md: "" },
-                }}
-              />
-            )}
-            <SyledCardContent>
-              {displayedPosts[2].tag && displayedPosts[2].tag.tag && (
-                <Typography gutterBottom variant="caption" component="div">
-                  {displayedPosts[2].tag.tag}
-                </Typography>
-              )}
-              <Typography gutterBottom variant="h6" component="div">
-                {displayedPosts[2].title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(displayedPosts[2].content)
-                }}
-              />
-            </SyledCardContent>
-            {displayedPosts[2].author && (
-              <Author author={displayedPosts[2].author.username} date={displayedPosts[2].created_at}/>
-            )}
-          </SyledCard>
-          </StyledLink>
-        </Grid>
-      )}
+          // Skip post 4 as it's handled in the stacked case
+          if (config === null) return null;
 
-      {/* Posts 3 and 4 (Middle Stacked) - md={4} - Render as ONE Grid Item */}
-      {/* Check if BOTH post 3 and post 4 exist before rendering this combined block */}
-      {displayedPosts[3] && displayedPosts[4] && (
-        <Grid item size={{ xs: 12, md: 4 }} key={`posts-3-4-stacked`}>
-          {" "}
-          {/* Unique key for the combined item */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              height: "100%",
-            }}
-          >
-            {/* Card for Post 3 (Above) - No Image */}
-            <StyledLink href={`/post/${displayedPosts[3].post_id}`}>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(3)} // Index 3
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 3 ? "Mui-focused" : ""}
-              sx={{ height: "100%" }}
-            >
-              <SyledCardContent
+          // Handle the stacked posts (3 and 4) as a single grid item
+          if (config.isStacked && displayedPosts[3] && displayedPosts[4]) {
+            return (
+              <Box
+                key={`posts-3-4-stacked`}
                 sx={{
+                  gridColumn: config.gridColumn,
                   display: "flex",
                   flexDirection: "column",
-                  justifyContent: "space-between",
+                  gap: 2,
                   height: "100%",
                 }}
               >
-                <div>
-                  {displayedPosts[3].tag && displayedPosts[3].tag.tag && (
-                    <Typography
-                      gutterBottom
-                      variant="caption"
-                      component="div"
-                    >
-                      {displayedPosts[3].tag.tag}
-                    </Typography>
-                  )}
-                  <Typography gutterBottom variant="h6" component="div">
-                    {displayedPosts[3].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(displayedPosts[3].content)
-                    }}
-                  />
-                </div>
-              </SyledCardContent>
-              {displayedPosts[3].author && (
-                <Author author={displayedPosts[3].author.username} date={displayedPosts[3].created_at}/>
-              )}
-            </SyledCard>
-              </StyledLink>
-            {/* Card for Post 4 (Below) - No Image */}
-            <StyledLink href={`/post/${displayedPosts[4].post_id}`}>
-            <SyledCard
-              variant="outlined"
-              onFocus={() => handleFocus(4)} // Index 4
-              onBlur={handleBlur}
-              tabIndex={0}
-              className={focusedCardIndex === 4 ? "Mui-focused" : ""}
-              sx={{ height: "100%" }}
+                {/* Post 3 (Above) - No Image */}
+                <PostCard
+                  post={displayedPosts[3]}
+                  index={3}
+                  cardSx={config.cardSx}
+                  mediaSx={config.mediaSx}
+                  showImage={false}
+                />
+                {/* Post 4 (Below) - No Image */}
+                <PostCard
+                  post={displayedPosts[4]}
+                  index={4}
+                  cardSx={config.cardSx}
+                  mediaSx={config.mediaSx}
+                  showImage={false}
+                />
+              </Box>
+            );
+          }
+
+          // Regular single post cards
+          return (
+            <Box
+              key={post.post_id}
+              sx={{
+                gridColumn: config.gridColumn,
+              }}
             >
-              <SyledCardContent
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  height: "100%",
-                }}
-              >
-                <div>
-                  {displayedPosts[4].tag && displayedPosts[4].tag.tag && (
-                    <Typography
-                      gutterBottom
-                      variant="caption"
-                      component="div"
-                    >
-                      {displayedPosts[4].tag.tag}
-                    </Typography>
-                  )}
-                  <Typography gutterBottom variant="h6" component="div">
-                    {displayedPosts[4].title}
-                  </Typography>
-                  <StyledTypography
-                    variant="body2"
-                    color="text.secondary"
-                    gutterBottom
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(displayedPosts[4].content)
-                    }}
-                  />
-                </div>
-              </SyledCardContent>
-              {displayedPosts[4].author && (
-                <Author author={displayedPosts[4].author.username} date={displayedPosts[4].created_at}/>
-              )}
-            </SyledCard>
-            </StyledLink>
-          </Box>
-        </Grid>
-      )}
-
-      {/* Post 5 (Middle Right / Bottom Left) - md={4} */}
-      {displayedPosts[5] && (
-        <Grid item size={{ xs: 12, md: 4 }} key={displayedPosts[5].post_id}>
-          <StyledLink href={`/post/${displayedPosts[5].post_id}`}>
-          <SyledCard
-            variant="outlined"
-            onFocus={() => handleFocus(5)} // Index 5
-            onBlur={handleBlur}
-            tabIndex={0}
-            className={focusedCardIndex === 5 ? "Mui-focused" : ""}
-            sx={{ height: "100%" }}
-          >
-            {displayedPosts[5].url && (
-              <CardMedia
-                component="img"
-                alt={displayedPosts[5].title}
-                image={displayedPosts[5].url}
-                sx={{
-                  height: { sm: "auto", md: "50%" },
-                  aspectRatio: { sm: "16 / 9", md: "" },
-                }}
+              <PostCard
+                post={post}
+                index={index}
+                cardSx={config.cardSx}
+                mediaSx={config.mediaSx}
+                showImage={config.showImage}
               />
-            )}
-            <SyledCardContent>
-              {displayedPosts[5].tag && displayedPosts[5].tag.tag && (
-                <Typography gutterBottom variant="caption" component="div">
-                  {displayedPosts[5].tag.tag}
-                </Typography>
-              )}
-              <Typography gutterBottom variant="h6" component="div">
-                {displayedPosts[5].title}
-              </Typography>
-              <StyledTypography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(displayedPosts[5].content)
-                }}
-              />
-            </SyledCardContent>
-            {displayedPosts[5].author && (
-              <Author author={displayedPosts[5].author.username} date={displayedPosts[5].created_at}/>
-            )}
-          </SyledCard>
-          </StyledLink>
-        </Grid>
-      )}
-    </Grid>
-
-    {/* PAGINATION SECTION */}
-    <Box sx={{ display: "flex", flexDirection: "row", pt: 4 }}>
-      <Pagination
-        hidePrevButton
-        hideNextButton
-        count={trueTotalPage}
-        page={currentPage}
-        onChange={hadnlePageChange}
-        boundaryCount={2}
-        siblingCount={1}
-      />
+            </Box>
+          );
+        })}
+      </Box>
     </Box>
-  </Box>
   );
 }
