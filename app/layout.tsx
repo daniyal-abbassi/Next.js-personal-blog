@@ -6,6 +6,7 @@ import "./globals.css";
 import AppTheme from '@/app/lib/theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppAppBar from './components/public/AppBar';
+import { Container } from '@mui/material';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,7 +37,10 @@ export default function RootLayout({
           <AppTheme>
             <CssBaseline enableColorScheme>
               <AppAppBar />
+              <Container maxWidth="lg" component="main" sx={{display: "flex", flexDirection: "column", my: 16, gap: 4 }}>
+
             {children}
+              </Container>
 
             </CssBaseline>
 
