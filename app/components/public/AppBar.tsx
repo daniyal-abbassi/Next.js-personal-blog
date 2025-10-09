@@ -68,7 +68,7 @@ export default async function AppAppBar(/*{ isAuth, setIsAuth }*/) {
               <form
                 action={handleSignOut}
               >
-                <Button color="error" variant="outlined" size="small">
+                <Button color="error" variant="outlined" size="small" type="submit">
                   Log Out
                 </Button>
               </form>
