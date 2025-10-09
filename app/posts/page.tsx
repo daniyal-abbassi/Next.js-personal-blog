@@ -2,9 +2,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Search } from "../components/public/mainContent/Search";
 import { Grid } from "@mui/material";
-import { getPosts, getTags } from "../lib/data";
+import { getPosts, getTags, getPostsCount } from "../lib/data";
 import { TagFilter } from "../components/public/mainContent/TagFilter";
 import { PostCard } from "../components/public/mainContent/PostCard";
+import PaginationControls from "../components/public/mainContent/PaginationControls";
 
 // Define the post type based on the getPosts return type
 type PostWithRelations = {
@@ -30,14 +31,21 @@ type PostWithRelations = {
 };
 
 export default async function Home(props: {
-  searchParams?: Promise<{ search?: string; tag?: string }>;
+  searchParams?: Promise<{ search?: string; tag?: string,page?:number }>;
 }) {
   const prop = await props.searchParams;
   const search = prop?.search || "";
   const tag = prop?.tag || "";
-  const displayedPosts = await getPosts(search, tag);
+  const pageSize = 6;
+  const page = Math.max(1, Number(prop?.page ?? 1));
+  const [displayedPosts, totalPosts] = await Promise.all([
+    getPosts(search, tag, page, pageSize),
+    getPostsCount(search, tag),
+  ]);
   const tags = await getTags();
+  const totalPages = Math.max(1, Math.ceil(totalPosts / pageSize));
 
+  
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <div>
@@ -231,6 +239,7 @@ export default async function Home(props: {
           );
         })}
       </Box>
+      <PaginationControls totalPages={totalPages} page={page} />
     </Box>
   );
 }
