@@ -2,16 +2,16 @@ import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
     pages: {
-        signIn: '/login'
+        signIn: '/sign-in'
     },
     callbacks: {
         authorized({auth, request: {nextUrl}}) { //auth: session | nextUrl: request
             const isLoggedIn = !!auth?.user; // !! => return a boolean
-            const isOnCreate = nextUrl.pathname.startsWith('/create');
-            const isOnEdit = /^\/\d+\/edit/.test(nextUrl.pathname);
+            const isOnAdmin = nextUrl.pathname.startsWith('/admin');
+            // const isOnEdit = /^\/\d+\/edit/.test(nextUrl.pathname);
             
             // Protect create and edit routes - require login
-            if(isOnCreate || isOnEdit) {
+            if(isOnAdmin) {
                 return isLoggedIn; // true if logged in, false if not
             }
             
