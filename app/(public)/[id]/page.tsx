@@ -19,6 +19,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBackIos"
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostById, getNextPost, getPreviousPost } from "@/app/lib/data";
+import { StyledLink } from "@/app/ui/styledThemes";
 
 // Define the post type based on the getPosts return type
 type PostWithRelations = {
@@ -43,30 +44,34 @@ type PostWithRelations = {
   } | null;
 };
 
-//STYLES LINK 
-const StyledLink = styled(Link)({
-  textDecoration: "none",
-  color: "inherit",
-  "&:hover": {
-    textDecoration: "none"
-  }
-});
+
 
 export default async function Page(props: {params: Promise<{id: string}>}) {
     const params = await props.params;
     const id = parseInt(params.id);
     
+    console.log('id: ',id, typeof id)
     if (isNaN(id)) {
         notFound();
     }
+    
+    let post, nextPost, previousPost;
+    
+    try {
+        [post, nextPost, previousPost] = await Promise.all([
+            getPostById(id),
+            getNextPost(id),
+            getPreviousPost(id)
+        ]);
 
-    const [post, nextPost, previousPost] = await Promise.all([
-        getPostById(id),
-        getNextPost(id),
-        getPreviousPost(id)
-    ]);
+        console.log('post found:', !!post, 'nextPost:', !!nextPost, 'previousPost:', !!previousPost);
 
-    if(!post) {
+        if(!post) {
+            console.log('Post not found, calling notFound()');
+            notFound();
+        }
+    } catch (error) {
+        console.error('Error fetching post data:', error);
         notFound();
     }
   return (

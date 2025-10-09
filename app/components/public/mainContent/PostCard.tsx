@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import DOMPurify from "dompurify";
+import { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import { StyledLink, StyledTypography, SyledCard, SyledCardContent } from "@/app/ui/styledThemes";
@@ -38,6 +37,16 @@ export function PostCard({
   showImage = true 
 }: PostCardProps) {
   const [focusedCardIndex, setFocusedCardIndex] = useState<number | null>(null);
+  const [sanitizedContent, setSanitizedContent] = useState<string>("");
+
+  useEffect(() => {
+    // Dynamically import DOMPurify only on client side
+    const sanitizeContent = async () => {
+      const DOMPurify = (await import('dompurify')).default;
+      setSanitizedContent(DOMPurify.sanitize(post.content || ""));
+    };
+    sanitizeContent();
+  }, [post.content]);
 
   const handleFocus = (cardIndex: number) => {
     setFocusedCardIndex(cardIndex);
@@ -48,7 +57,7 @@ export function PostCard({
   };
 
   return (
-    <StyledLink href={`/post/${post.post_id}`}>
+    <StyledLink href={`/${post.post_id}`}>
       <SyledCard
         variant="outlined"
         onFocus={() => handleFocus(index)}
@@ -79,7 +88,7 @@ export function PostCard({
             color="text.secondary"
             gutterBottom
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(post.content || "")
+              __html: sanitizedContent
             }}
           />
         </SyledCardContent>
