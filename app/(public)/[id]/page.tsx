@@ -1,5 +1,4 @@
 //Single Post component
-import DOMPurify from "dompurify";
 import { format } from "date-fns";
 import Box from "@mui/material/Box";
 import {
@@ -20,6 +19,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostById, getNextPost, getPreviousPost } from "@/app/lib/data";
 import { StyledLink } from "@/app/ui/styledThemes";
+import { SanitizedContent } from "@/app/components/public/mainContent/SanitizedContent";
 
 // Define the post type based on the getPosts return type
 type PostWithRelations = {
@@ -50,7 +50,6 @@ export default async function Page(props: {params: Promise<{id: string}>}) {
     const params = await props.params;
     const id = parseInt(params.id);
     
-    console.log('id: ',id, typeof id)
     if (isNaN(id)) {
         notFound();
     }
@@ -64,10 +63,7 @@ export default async function Page(props: {params: Promise<{id: string}>}) {
             getPreviousPost(id)
         ]);
 
-        console.log('post found:', !!post, 'nextPost:', !!nextPost, 'previousPost:', !!previousPost);
-
         if(!post) {
-            console.log('Post not found, calling notFound()');
             notFound();
         }
     } catch (error) {
@@ -117,12 +113,10 @@ export default async function Page(props: {params: Promise<{id: string}>}) {
           }}
         />
       )}
-      <Typography
-        variant="h4"
-        component="div"
-        dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(post.content || ""),
-        }}
+      <SanitizedContent 
+        content={post.content} 
+        variant="h4" 
+        component="div" 
       />
       <Box
         sx={{
