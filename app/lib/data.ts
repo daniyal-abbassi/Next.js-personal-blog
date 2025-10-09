@@ -78,11 +78,15 @@ export async function getTags() {
     }
 }
 
-export async function getPostById(id: string) {
+export async function getPostById(id: number) {
     try {
         const post = await prisma.post.findUnique({
             where: {
-                post_id: Number(id),
+                post_id: id,
+            },
+            include: {
+                User: true,
+                Tag: true
             }
         })
         return post;
