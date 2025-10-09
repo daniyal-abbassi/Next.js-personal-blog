@@ -118,7 +118,7 @@ export default function LoginForm() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-
+            <input type="hidden" name="redirectTo" value={callbackUrl} />
             <Button
               type="submit"
               fullWidth
