@@ -8,7 +8,7 @@ import { PostCard } from "../components/public/mainContent/PostCard";
 import PaginationControls from "../components/public/mainContent/PaginationControls";
 
 // Define the post type based on the getPosts return type
-type PostWithRelations = {
+export type PostWithRelations = {
   post_id: number;
   title: string;
   content: string | null;

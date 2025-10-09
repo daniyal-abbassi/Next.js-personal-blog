@@ -17,6 +17,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIcon from "@mui/icons-material/ArrowBackIos"
 import { Post } from "@prisma/client";
+import { PostWithRelations } from "../page";
 //STYLES LINK 
 // const StyledLink = styled(Link)({
 //   textDecoration: "none",
@@ -25,9 +26,10 @@ import { Post } from "@prisma/client";
 //     textDecoration: "none"
 //   }
 // });
-export default function Page(props: {searchParams : Promise<{id: number, post: Post}>}) {
- 
-
+export default async function Page(props: {searchParams? : Promise<{id: number, post: PostWithRelations}>}) {
+    const prop = await props?.searchParams;
+    const id = prop?.id;
+    const post = prop?.post;
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <IconButton
