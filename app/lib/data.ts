@@ -95,3 +95,51 @@ export async function getPostById(id: number) {
         throw new Error('database Error: Failed to get PostById.');
     }
 }
+
+export async function getNextPost(currentPostId: number) {
+    try {
+        const nextPost = await prisma.post.findFirst({
+            where: {
+                isPublished: true,
+                post_id: {
+                    gt: currentPostId
+                }
+            },
+            include: {
+                User: true,
+                Tag: true
+            },
+            orderBy: {
+                post_id: 'asc'
+            }
+        });
+        return nextPost;
+    } catch (error) {
+        console.error('Failed to get next post: ', error);
+        throw new Error('database Error: Failed to get next post.');
+    }
+}
+
+export async function getPreviousPost(currentPostId: number) {
+    try {
+        const previousPost = await prisma.post.findFirst({
+            where: {
+                isPublished: true,
+                post_id: {
+                    lt: currentPostId
+                }
+            },
+            include: {
+                User: true,
+                Tag: true
+            },
+            orderBy: {
+                post_id: 'desc'
+            }
+        });
+        return previousPost;
+    } catch (error) {
+        console.error('Failed to get previous post: ', error);
+        throw new Error('database Error: Failed to get previous post.');
+    }
+}
