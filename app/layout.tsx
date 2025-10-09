@@ -1,12 +1,8 @@
-import {AppRouterCacheProvider} from '@mui/material-nextjs/v15-appRouter';
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import AppTheme from '@/app/lib/theme/AppTheme';
-import CssBaseline from '@mui/material/CssBaseline';
-import AppAppBar from './components/public/AppBar';
-import { Container } from '@mui/material';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,20 +28,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <InitColorSchemeScript attribute='data-mui-color-scheme' />
-        <AppRouterCacheProvider>
-          <AppTheme>
-            <CssBaseline enableColorScheme>
-              <AppAppBar />
-              <Container maxWidth="lg" component="main" sx={{display: "flex", flexDirection: "column", my: 16, gap: 4 }}>
-
-            {children}
-              </Container>
-
-            </CssBaseline>
-
-          </AppTheme>
-        </AppRouterCacheProvider>
+        <InitColorSchemeScript attribute="data-mui-color-scheme" />
+        <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
       </body>
     </html>
   );
