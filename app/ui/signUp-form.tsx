@@ -1,7 +1,7 @@
+'use client';
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
@@ -9,9 +9,14 @@ import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { SignUpContainer,SignUpCard } from "@/app/ui/styledThemes";
+import { useActionState } from "react";
+import { signUp } from "../lib/actions";
+import Link from "next/link";
 
 
 export default function SignUpForm() {
+    const [errorMessage, formAction,isPending] = useActionState(signUp,undefined);
+
     return (
         <SignUpContainer direction="column" justifyContent="space-between">
         <SignUpCard variant="outlined">
@@ -25,21 +30,21 @@ export default function SignUpForm() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            action={formAction}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <FormControl>
               <FormLabel htmlFor="username">Username</FormLabel>
               <TextField
                 autoComplete="username"
-                username="username"
+                name="username"
                 required
                 fullWidth
                 id="username"
                 placeholder="Jon Snow"
-                error={usernameError}
-                helperText={usernameErrorMessage}
-                color={usernameError ? "error" : "primary"}
+                error={!!errorMessage}
+                helperText={errorMessage}
+                color={errorMessage ? "error" : "primary"}
               />
             </FormControl>
             <FormControl>
@@ -49,12 +54,12 @@ export default function SignUpForm() {
                 fullWidth
                 id="email"
                 placeholder="your@email.com"
-                username="email"
+                name="email"
                 autoComplete="email"
                 variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? "error" : "primary"}
+                error={!!errorMessage}
+                helperText={errorMessage}
+                color={errorMessage ? "error" : "primary"}
               />
             </FormControl>
             <FormControl>
@@ -62,15 +67,15 @@ export default function SignUpForm() {
               <TextField
                 required
                 fullWidth
-                username="password"
+                name="password"
                 placeholder="••••••"
                 type="password"
                 id="password"
                 autoComplete="new-password"
                 variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? "error" : "primary"}
+                error={!!errorMessage}
+                helperText={errorMessage}
+                color={errorMessage ? "error" : "primary"}
               />
             </FormControl>
             <FormControlLabel
@@ -81,7 +86,6 @@ export default function SignUpForm() {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
             >
               Sign up
             </Button>
@@ -92,7 +96,7 @@ export default function SignUpForm() {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Typography sx={{ textAlign: "center" }}>
               Already have an account?{" "}
-              <Link to="/sign-in">
+              <Link href="/sign-in">
                 <Button color="primary" variant="outlined" size="small">
                   Sign in
                 </Button>

@@ -29,7 +29,7 @@ export async function signUp(preState: string | undefined, formData: FormData) {
 
     const { username, password } = validatedFields.data;
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: { username },
     });
     if (existingUser) {
@@ -44,25 +44,13 @@ export async function signUp(preState: string | undefined, formData: FormData) {
         password: hashPassword,
       },
     });
-
-    try {
-      await signIn("credentials", {
-        username,
-        password,
-        redirectTo: "/",
-      });
-    } catch (error) {
-      if (error instanceof AuthError) {
-        return "Auto-login failed. Please sign in manually.";
-      }
-      throw error;
-    }
-
-    return "success";
+    
   } catch (error) {
     console.error("Sign-up error:", error);
     return "Something went wrong!";
   }
+
+    redirect('/')
 }
 
 export async function authenticate(
