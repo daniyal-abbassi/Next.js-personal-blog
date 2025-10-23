@@ -44,13 +44,26 @@ export async function signUp(preState: string | undefined, formData: FormData) {
         password: hashPassword,
       },
     });
-    
+
+    try {
+      await signIn("credentials", {username,password,redirect:false});
+    } catch (error) {
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case "CredentialsSignin":
+            return "Invalid credentials";
+          default:
+            return "Somthing went wrong!";
+        }
+      }
+      throw error;
+    } //catch block
   } catch (error) {
     console.error("Sign-up error:", error);
     return "Something went wrong!";
   }
-
-    redirect('/')
+  revalidatePath("/");
+  redirect("/");
 }
 
 export async function authenticate(
