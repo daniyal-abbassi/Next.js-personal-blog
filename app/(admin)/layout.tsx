@@ -7,7 +7,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    
       <html lang="en" suppressHydrationWarning>
         <head />
         <body>
@@ -17,11 +17,13 @@ export default function DashboardLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <AdminHeader/>
-            {children}
+            <div className="flex min-h-screen flex-col">
+              <AdminHeader /> 
+              <main className="flex-1 p-6">{children}</main>
+            </div>
           </ThemeProvider>
         </body>
       </html>
-    </>
+    
   );
 }
