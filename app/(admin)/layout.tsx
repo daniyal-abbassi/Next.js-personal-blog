@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/app/lib/theme/theme-provider";
+import { AdminHeader } from "../components/private/admin-header";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +17,7 @@ export default function DashboardLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <AdminHeader/>
             {children}
           </ThemeProvider>
         </body>
