@@ -40,7 +40,41 @@ export async function getPosts(search?:string,tag?:string, page:number = 1, page
         throw new Error('database Error: Failed to get all posts.')
     }
 }
+export async function getAdminPosts(search?:string,tag?:string, page:number = 1, pageSize:number = 6){
+    try {
+        const whereClause : Prisma.PostWhereInput = {};
 
+
+        if(search) {
+            whereClause.OR = [
+                {title: {contains: search, mode: Prisma.QueryMode.insensitive}},
+                {content: {contains: search, mode: Prisma.QueryMode.insensitive}},
+            ]
+        };
+
+        if(tag && tag !== 'All categories') {
+            whereClause.Tag = {
+                tag: {equals: tag},
+            }
+        }
+
+        const posts = await prisma.post.findMany({
+            where: whereClause,
+            include: {
+                User: true,
+                Tag: true,
+            },
+            orderBy: {created_at: 'desc'},
+            skip: Math.max(0, (page - 1) * pageSize),
+            take: pageSize,
+        });
+        return posts;
+        
+    } catch (error) {
+        console.error('Failed to get all posts: ',error);
+        throw new Error('database Error: Failed to get all posts.')
+    }
+}
 export async function getPostsCount(search?:string, tag?:string) {
     try {
         const whereClause : Prisma.PostWhereInput = {
