@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/app/lib/theme/theme-provider";
 import { AdminHeader } from "../components/private/admin-header";
-
+import '@/app/styles/index.css'
 export default function DashboardLayout({
   children,
 }: {
