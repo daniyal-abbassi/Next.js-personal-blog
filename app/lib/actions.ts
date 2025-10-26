@@ -46,7 +46,7 @@ export async function signUp(preState: string | undefined, formData: FormData) {
     });
 
     try {
-      await signIn("credentials", {username,password,redirect:false});
+      await signIn("credentials", { username, password, redirect: false });
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {
@@ -106,20 +106,70 @@ export type State = {
 };
 
 const CreatePost = FormSchema;
+
 // Delete post function
-export async function deletePost(id: number) {
-  const session = await auth();
+type ActionResponse<T = any> =
+  | { success: true; data: T }
+  | { success: false; error: string };
 
-  if (!session?.user) {
-    throw new Error("Unauthorized: You must be logged in to delete posts");
+export async function deletePost(id: number): Promise<ActionResponse> {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return {
+        success: false,
+        error: "Unauthorized: You must be logged in to delete posts",
+      };
+    }
+
+    const post = await prisma.post.findUnique({
+      where: { post_id: id },
+    });
+    if (!post) {
+      return { success: false, error: "Post Not Found!" };
+    }
+
+    //one admin can not delete others admin post = ownership
+    await prisma.post.delete({
+      where: {
+        post_id: id,
+      },
+    });
+    revalidatePath("/admin");
+    revalidatePath("/posts");
+    return { success: true, data: post };
+  } catch (error) {
+    console.error("Delete post error:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to delete post!",
+    };
   }
+}
 
-  await prisma.post.delete({
-    where: {
-      post_id: id,
-    },
-  });
-  revalidatePath("/posts");
+// toggle publish state
+export async function togglePublish(postId: number, isPublished:boolean): Promise<ActionResponse> {
+  try {
+    const updatedPost = await prisma.post.update({
+      where: {post_id: postId},
+      data: {isPublished},
+      include: {
+        Tag: true
+      }
+    });
+
+    revalidatePath('/admin');
+    revalidatePath('/posts');
+
+    return {success: true, data: updatedPost};
+  } catch (error) {
+    console.error('Toggle publish error:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Failed to update post' 
+    };
+  }
 }
 // Update/Edit post function
 export async function editPost(
