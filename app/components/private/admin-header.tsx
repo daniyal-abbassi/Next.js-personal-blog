@@ -2,7 +2,7 @@
 'use client';
 
 import { ModeToggle } from '@/app/components/private/ModeToggle';
-import { Button } from '@/app/components/private/button';
+import { Button } from '@/app/ui/button';
 import { handleSignOut } from '@/app/lib/actions';
 import { signOut } from '@/auth';
 import Link from 'next/link';
