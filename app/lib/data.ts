@@ -46,7 +46,6 @@ export async function getAdminPosts(
   sort = "created_at",
   order = "desc",
   page: number = 1,
-  tag?: string,
   pageSize: number = 6
 ) {
   try {
@@ -63,11 +62,11 @@ export async function getAdminPosts(
       orderByClause[sort] = order === 'asc' ? 'asc' : 'desc';
     }
 
-    if (tag && tag !== "All categories") {
-      whereClause.Tag = {
-        tag: { equals: tag },
-      };
-    }
+    // if (tag && tag !== "All categories") {
+    //   whereClause.Tag = {
+    //     tag: { equals: tag },
+    //   };
+    // }
 
     const posts = await prisma.post.findMany({
       where: whereClause,

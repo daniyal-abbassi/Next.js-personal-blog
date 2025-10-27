@@ -1,4 +1,6 @@
-import { Suspense } from 'react';
+// app/components/private/PostsTable/PostsTab.tsx
+'use client';
+
 import { TabsContent } from '@/app/ui/tabs';
 import {
   Card,
@@ -8,28 +10,36 @@ import {
   CardHeader,
   CardTitle,
 } from '@/app/ui/card';
-import PostsTableServer from './PostsTableServer';
+import PostsTable from './PostsTable';
 // import SearchAndSort from './SearchAndSort';
-// import Pagination from './Pagination';
-import { Loader2 } from 'lucide-react';
-import { getAdminPosts, getPostsCount } from '@/app/lib/data';
-import type { User } from '@prisma/client';
-import Page from './Pagination';
+import PaginationComponent from './Pagination';
+import type { Post, User, Tag } from '@prisma/client';
+
+type PostWithRelations = Post & {
+  User: User;
+  Tag: Tag | null;
+};
 
 type Props = {
+  posts: PostWithRelations[];
+  currentPage: number;
+  totalPages: number;
   search: string;
   sort: string;
   order: string;
-  page: number;
-  setSelectedPost: (post: any) => void;
-}
+  setSelectedPost: (post: PostWithRelations) => void;
+  // username: string;
+};
 
-export default function PostsTab({ 
-  search, 
-  sort, 
-  order, 
-  page,
-  setSelectedPost
+export default function PostsTab({
+  posts,
+  currentPage,
+  totalPages,
+  search,
+  sort,
+  order,
+  setSelectedPost,
+  // username,
 }: Props) {
   return (
     <TabsContent value="posts">
@@ -41,47 +51,25 @@ export default function PostsTab({
               All your published & un-published posts here.
             </CardDescription>
           </div>
-          
-          {/* Client component for search/sort form */}
-          {/* <SearchAndSort initialSort={sort} initialOrder={order} /> */}
+
+          {/* Search and Sort Controls */}
+          {/* <SearchAndSort initialSearch={search} initialSort={sort} initialOrder={order} /> */}
         </CardHeader>
 
         <CardContent>
-          <Suspense fallback={<TableSkeleton />}>
-            <PostsTableServer 
-              search={search}
-              sort={sort}
-              order={order}
-              page={page}
-              setSelectedPost={setSelectedPost}
-              // username={user.username}
-            />
-          </Suspense>
+          {posts.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No posts found.
+            </div>
+          ) : (
+            <PostsTable posts={posts} setSelectedPost={setSelectedPost}  />
+          )}
         </CardContent>
 
         <CardFooter>
-          <Suspense fallback={<div>Loading...</div>}>
-            <PaginationWrapper search={search} page={page} />
-          </Suspense>
+          <PaginationComponent currentPage={currentPage} totalPages={totalPages} />
         </CardFooter>
       </Card>
     </TabsContent>
-  );
-}
-
-// Separate async component for pagination (fetches total count)
-async function PaginationWrapper({ search, page }: { search: string; page: number }) {
-  const totalPosts = await getPostsCount(search);
-  const pageSize = 6;
-  const totalPages = Math.ceil(totalPosts / pageSize);
-
-  return <Page currentPage={page} totalPages={totalPages} />;
-}
-
-function TableSkeleton() {
-  return (
-    <div className="flex justify-center items-center h-64">
-      <Loader2 className="animate-spin" width={40} height={40} />
-    </div>
   );
 }

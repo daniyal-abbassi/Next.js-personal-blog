@@ -4,23 +4,44 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger } from '@/app/ui/tabs';
 import PostsTableTab from './PostsTable/PostsTableTab';
+import { Post, Tag, User } from '@prisma/client';
 // import CreatePostTab from './CreatePostTab';
 // import EditPostTab from './EditPostTab';
 
+// type Props = {
+//   initialTab: string;
+//   search: string;
+//   sort: string;
+//   order: string;
+//   page: number;
+//   posts: Post;
+// }
+type PostWithRelations = Post & {
+  User: User;
+  Tag: Tag | null;
+};
+
 type Props = {
   initialTab: string;
+  posts: PostWithRelations[];
+  currentPage: number;
+  totalPages: number;
   search: string;
   sort: string;
   order: string;
-  page: number;
-}
+  // setSelectedPost: (post: PostWithRelations) => void;
+  // username: string;
+};
 
 export default function AdminDashboard({ 
   initialTab, 
   search, 
   sort, 
   order, 
-  page
+  // page,
+  currentPage,
+  totalPages,
+  posts,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -55,12 +76,15 @@ export default function AdminDashboard({
         </TabsTrigger>
       </TabsList>
 
-      <PostsTableTab 
+      <PostsTableTab
+        posts={posts}
+        currentPage={currentPage}
+        totalPages={totalPages}
         search={search}
         sort={sort}
         order={order}
-        page={page}
         setSelectedPost={setSelectedPost}
+        // username={user.username}
       />
 
       {/* <CreatePostTab user={user} />

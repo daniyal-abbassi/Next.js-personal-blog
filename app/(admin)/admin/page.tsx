@@ -1,52 +1,60 @@
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { Loader2 } from "lucide-react";
-import AdminDashboard from "@/app/components/private/AdminDashboard";
+// app/(admin)/admin/page.tsx
+import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
+import AdminDashboard from '@/app/components/private/AdminDashboard';
+// import { auth } from '@/app/lib/auth';
+import { getAdminPosts, getPostsCount } from '@/app/lib/data';
+import { Loader2 } from 'lucide-react';
 
-export default async function AdminPage(props: {
-  searchParams?: Promise<{
-    tab?: string;
-    search?: string;
-    sort?: string;
-    order?: "asc" | "desc";
-    page?: string;
-  }>;
-}) {
-    // User URL rather then UseState
-    const prop = await props.searchParams;
-    const tab = prop?.tab || 'posts';
-    const search = prop?.search || '';
-    const sort = prop?.sort || 'created_at';
-    const order = prop?.order || 'desc'
-    const page = Number(prop?.page) || 1;
+type SearchParams = {
+  tab?: string;
+  search?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  page?: string;
+};
 
-    // Check for existing session
-    const session = await auth();
-    if(!session) {
-        redirect('/sign-in')
-    }
+export default async function AdminPage(props: {searchParams:Promise<SearchParams>} ) {
+ 
+
+  // 2. Parse params
+  const prop = await props.searchParams;
+  const tab = prop?.tab || 'posts';
+  const search = prop?.search || '';
+  const sort = prop?.sort || 'created_at';
+  const order = prop?.order || 'desc';
+  const currentPage = Number(prop?.page) || 1;
+  const pageSize = 6;
+
+  // 3. Fetch data in parallel (only if on posts tab)
+  // const [posts, totalPosts] = tab === 'posts' 
+  //   ? await Promise.all([
+  //       getAdminPosts(search, sort, order, currentPage, pageSize ),
+        
+  //       getPostsCount(search),
+  //     ])
+  //   : [[], 0];
+
+  const [posts, totalPosts] =  await Promise.all([
+    getAdminPosts(search, sort, order, currentPage, pageSize ),
+    
+    getPostsCount(search),
+  ])
+  const totalPages = Math.ceil(totalPosts / pageSize);
   return (
-        <main className="p-4">
-            <Suspense fallback={<DashboardSkeleton />}>
-                <AdminDashboard 
-                    initialTab={tab}
-                    search={search}
-                    sort={sort}
-                    order={order}
-                    page={page}
-                />
-            </Suspense>
-        </main>
+    <main className="p-4">
+      <AdminDashboard
+        initialTab={tab}
+        // user={user}
+        // Posts data
+        posts={posts}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        // Filter/sort values
+        search={search}
+        sort={sort}
+        order={order}
+      />
+    </main>
   );
 }
-
-function DashboardSkeleton() {
-    return (
-        <div className="min-h-[85vh] flex justify-center items-center">
-            <Loader2 className="animate-spin" width={50} height={50} />
-        </div>
-    )
-}
-
-
