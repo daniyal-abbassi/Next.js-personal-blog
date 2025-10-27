@@ -7,6 +7,7 @@ import PostsTableTab from "./PostsTable/PostsTableTab";
 import { Post, Tag, User } from "@prisma/client";
 import CreatePostTab from "./CreatePost/CreatePostTab";
 import CreatePostForm from "./CreatePost/CreatePostForm";
+import EditPostTab from "./EditPost/EditPostTab";
 // import EditPostTab from './EditPostTab';
 
 // type Props = {
@@ -46,8 +47,8 @@ export default function AdminDashboard({
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedPost, setSelectedPost] = useState<any>(null);
-
+  // const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [selectedPost, setSelectedPost] = useState<PostWithRelations | null>(null);
   // update URL + keep it in sync
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -90,10 +91,10 @@ export default function AdminDashboard({
         <CreatePostForm />
       </CreatePostTab>
 
-      {/* <EditPostTab 
+      <EditPostTab 
         selectedPost={selectedPost}
         setSelectedPost={setSelectedPost}
-      /> */}
+      />
     </Tabs>
   );
 }

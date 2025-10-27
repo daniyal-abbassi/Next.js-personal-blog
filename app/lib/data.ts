@@ -1,5 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { Prisma } from "@prisma/client";
+import z from "zod";
 
 export async function getPosts(
   search?: string,
