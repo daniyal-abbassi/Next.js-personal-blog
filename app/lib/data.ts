@@ -199,3 +199,23 @@ export async function getExistingTags() {
     return [];
   }
 }
+
+export async function findOrCreateTag(tagName: string) {
+  try {
+    let tag = await prisma.tag.findFirst({
+      where: { tag: tagName },
+    });
+
+    if (!tag) {
+      tag = await prisma.tag.create({
+        data: { tag: tagName },
+      });
+    }
+
+    return tag;
+  } catch (error) {
+    console.error('Tag creation error:', error);
+    throw new Error('Failed to process tag');
+  }
+}
+

@@ -6,7 +6,7 @@ import { User } from "@prisma/client";
 import {prisma} from "@/app/lib/prisma";
 import bcrypt from "bcrypt";
 
-async function getUser(username: string) : Promise<User | undefined> {
+export async function getUser(username: string) : Promise<User | undefined> {
     try {
         const user = await prisma.user.findFirst({
             where: {

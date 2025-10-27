@@ -3,10 +3,16 @@ import { z } from "zod";
 import { prisma } from "@/app/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { signIn, auth } from "@/auth";
+import { signIn, auth, getUser } from "@/auth";
 import { AuthError } from "next-auth";
 import bcrypt from "bcrypt";
 import { signOut } from "@/auth";
+import {
+  uploadToCloudinary,
+  deleteFromCloudinary,
+  validateImageFile,
+} from '@/app/lib/uploadToCloudinary';
+import { findOrCreateTag } from "./data";
 
 export async function handleSignOut() {
   await signOut({ redirectTo: "/" });
@@ -86,7 +92,7 @@ export async function authenticate(
 }
 
 // Validate Object
-const FormSchema = z.object({
+export const FormSchema = z.object({
   title: z.string().min(1, "A post cannot publish without a title."),
   content: z.string().min(1, "A post should contain something atleast!"),
   author_id: z.number(),
@@ -129,7 +135,15 @@ export async function deletePost(id: number): Promise<ActionResponse> {
     if (!post) {
       return { success: false, error: "Post Not Found!" };
     }
-
+    //delete from cloudinary
+    if (post.coudinaryId) {
+      try {
+        await deleteFromCloudinary(post.coudinaryId);
+      } catch (error) {
+        console.error('Failed to delete from Cloudinary:', error);
+        // Continue with post deletion even if Cloudinary fails
+      }
+    }
     //one admin can not delete others admin post = ownership
     await prisma.post.delete({
       where: {
@@ -215,40 +229,279 @@ export async function editPost(
   revalidatePath("/posts");
   redirect("/posts");
 }
+
+export type FormState = {
+  errors?: {
+    title?: string[];
+    content?: string[];
+    tag?: string[];
+    file?: string[];
+    isPublished?: string[];
+  };
+  message?: string | null;
+  success?: boolean;
+};
+const CreatePostSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title too long'),
+  content: z.string().min(10, 'Content must be at least 10 characters'),
+  tag: z.string().min(1, 'Tag is required'),
+  isPublished: z.boolean(),
+});
 // Create post function
-export async function createPost(prevState: State, formData: FormData) {
-  const validatedFields = CreatePost.safeParse({
-    //this will return an object wheather success or error
-    author_id: 1,
-    tag_id: formData.get("tag"),
-    title: formData.get("title"),
-    content: formData.get("content"),
-    isPublished: formData.get("publishStatus") === "publish" ? true : false,
-  });
-  if (!validatedFields.success) {
+// export async function createPost(prevState: State, formData: FormData) {
+//   const validatedFields = CreatePost.safeParse({
+//     //this will return an object wheather success or error
+//     author_id: 1,
+//     tag_id: formData.get("tag"),
+//     title: formData.get("title"),
+//     content: formData.get("content"),
+//     isPublished: formData.get("publishStatus") === "publish" ? true : false,
+//   });
+//   if (!validatedFields.success) {
+//     return {
+//       errors: validatedFields.error.flatten().fieldErrors,
+//       message: "Check the form inputs again, something is missing!!!",
+//     };
+//   }
+//   const { author_id, tag_id, title, content, isPublished } =
+//     validatedFields.data;
+//   try {
+//     await prisma.post.create({
+//       data: {
+//         title: title,
+//         content: content,
+//         author_id: author_id,
+//         tag_id: tag_id,
+//         isPublished: isPublished,
+//         updated_at: new Date(),
+//       },
+//     });
+//   } catch (error) {
+//     return {
+//       message: "Database error: Failed to create Post.",
+//     };
+//   }
+//   revalidatePath("/admin");
+//   revalidatePath("/posts");
+// }
+export async function createPostAction(
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
+  try {
+    // 2. EXTRACT & VALIDATE FORM DATA
+    const rawData = {
+      title: formData.get('title'),
+      content: formData.get('content'),
+      tag: formData.get('tag'),
+      isPublished: formData.get('isPublished') === 'on',
+    };
+
+    const validatedFields = CreatePostSchema.safeParse(rawData);
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Invalid form data. Please check the fields.',
+        success: false,
+      };
+    }
+
+    const { title, content, tag, isPublished } = validatedFields.data;
+
+    // 3. HANDLE FILE UPLOAD TO CLOUDINARY 
+    let imageUrl: string | null = null;
+    let publicId: string | null = null;
+
+    const file = formData.get('file') as File | null;
+
+    if (file && file.size > 0) {
+      // Validate file
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        return {
+          errors: { file: [validation.error!] },
+          message: 'Invalid image file.',
+          success: false,
+        };
+      }
+
+      try {
+        // Upload to Cloudinary
+        const uploadResult = await uploadToCloudinary(file, 'blog-posts');
+        imageUrl = uploadResult.url;
+        publicId = uploadResult.coudinaryId;
+      } catch (error) {
+        return {
+          errors: {
+            file: [error instanceof Error ? error.message : 'Upload failed'],
+          },
+          message: 'Failed to upload image to Cloudinary.',
+          success: false,
+        };
+      }
+    }
+
+    // 4. FIND OR CREATE TAG
+    const tagRecord = await findOrCreateTag(tag);
+    // 5. CREATE POST IN DATABASE
+    const post = await prisma.post.create({
+      data: {
+        title,
+        content,
+        url: imageUrl,
+        coudinaryId: publicId,
+        author_id: 1,
+        tag_id: tagRecord.tag_id,
+        isPublished,
+        updated_at: new Date(),
+      },
+      include: {
+        User: true,
+        Tag: true,
+      },
+    });
+
+    // 6. REVALIDATE CACHE
+    revalidatePath('/admin');
+    revalidatePath('/posts');
+
+    // 7. SUCCESS RESPONSE
     return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: "Check the form inputs again, something is missing!!!",
+      message: `Post "${title}" created successfully!`,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Create post error:', error);
+    return {
+      message: error instanceof Error ? error.message : 'Failed to create post',
+      success: false,
     };
   }
-  const { author_id, tag_id, title, content, isPublished } =
-    validatedFields.data;
+}
+
+export async function updatePostAction(
+  postId: number,
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
   try {
-    await prisma.post.create({
+    // const user = await auth();
+    // if (!user) {
+    //   return { message: 'Unauthorized', success: false };
+    // }
+
+    // Get existing post
+    const existingPost = await prisma.post.findUnique({
+      where: { post_id: postId },
+    });
+
+    if (!existingPost) {
+      return { message: 'Post not found', success: false };
+    }
+
+    // if (existingPost.author_id !== user.id) {
+    //   return { message: 'Forbidden', success: false };
+    // }
+
+    // Validate form data
+    const rawData = {
+      title: formData.get('title'),
+      content: formData.get('content'),
+      tag: formData.get('tag'),
+      isPublished: formData.get('isPublished') === 'true',
+    };
+
+    const validatedFields = CreatePostSchema.safeParse(rawData);
+
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'Invalid form data',
+        success: false,
+      };
+    }
+
+    const { title, content, tag, isPublished } = validatedFields.data;
+
+    // Handle new file upload
+    let imageUrl = existingPost.url;
+    let publicId = existingPost.coudinaryId;
+
+    const file = formData.get('file') as File | null;
+    const shouldDeleteImage = formData.get('deleteImage') === 'true';
+
+    // Delete old image if requested
+    if (shouldDeleteImage && existingPost.coudinaryId) {
+      try {
+        await deleteFromCloudinary(existingPost.coudinaryId);
+        imageUrl = null;
+        publicId = null;
+      } catch (error) {
+        console.error('Failed to delete old image:', error);
+      }
+    }
+
+    // Upload new image
+    if (file && file.size > 0) {
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        return {
+          errors: { file: [validation.error!] },
+          message: 'Invalid image file',
+          success: false,
+        };
+      }
+
+      try {
+        // Delete old image if exists
+        if (existingPost.coudinaryId) {
+          await deleteFromCloudinary(existingPost.coudinaryId);
+        }
+
+        // Upload new image
+        const uploadResult = await uploadToCloudinary(file, 'blog-posts');
+        imageUrl = uploadResult.url;
+        publicId = uploadResult.public_id;
+      } catch (error) {
+        return {
+          errors: { file: ['Failed to upload new image'] },
+          message: 'Image upload failed',
+          success: false,
+        };
+      }
+    }
+
+    // Find or create tag
+    const tagRecord = await findOrCreateTag(tag);
+
+    // Update post
+    await prisma.post.update({
+      where: { post_id: postId },
       data: {
-        title: title,
-        content: content,
-        author_id: author_id,
-        tag_id: tag_id,
-        isPublished: isPublished,
+        title,
+        content,
+        url: imageUrl,
+        coudinaryId: publicId,
+        tag_id: tagRecord.tag_id,
+        isPublished,
         updated_at: new Date(),
       },
     });
-  } catch (error) {
+
+    revalidatePath('/admin');
+    revalidatePath('/posts');
+    revalidatePath('/');
+
     return {
-      message: "Database error: Failed to create Post.",
+      message: 'Post updated successfully!',
+      success: true,
+    };
+  } catch (error) {
+    console.error('Update post error:', error);
+    return {
+      message: error instanceof Error ? error.message : 'Failed to update post',
+      success: false,
     };
   }
-  revalidatePath("/admin");
-  revalidatePath("/posts");
 }

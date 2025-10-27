@@ -1,11 +1,12 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Tabs, TabsList, TabsTrigger } from '@/app/ui/tabs';
-import PostsTableTab from './PostsTable/PostsTableTab';
-import { Post, Tag, User } from '@prisma/client';
-// import CreatePostTab from './CreatePostTab';
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger } from "@/app/ui/tabs";
+import PostsTableTab from "./PostsTable/PostsTableTab";
+import { Post, Tag, User } from "@prisma/client";
+import CreatePostTab from "./CreatePost/CreatePostTab";
+import CreatePostForm from "./CreatePost/CreatePostForm";
 // import EditPostTab from './EditPostTab';
 
 // type Props = {
@@ -33,11 +34,11 @@ type Props = {
   // username: string;
 };
 
-export default function AdminDashboard({ 
-  initialTab, 
-  search, 
-  sort, 
-  order, 
+export default function AdminDashboard({
+  initialTab,
+  search,
+  sort,
+  order,
   // page,
   currentPage,
   totalPages,
@@ -50,15 +51,17 @@ export default function AdminDashboard({
   // update URL + keep it in sync
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', value);
+    params.set("tab", value);
     router.push(`?${params.toString()}`);
   };
 
   return (
-    <Tabs 
-      value={initialTab} 
+    <Tabs
+      value={initialTab}
       onValueChange={handleTabChange}
-      className={`${initialTab === "posts" ? "max-w-[1200px]" : "max-w-[800px]"} mx-auto mt-8 shadow-lg transition-all duration-500 ease`}
+      className={`${
+        initialTab === "posts" ? "max-w-[1200px]" : "max-w-[800px]"
+      } mx-auto mt-8 shadow-lg transition-all duration-500 ease`}
     >
       <TabsList className="w-full flex">
         <TabsTrigger className="flex-1" value="posts">
@@ -67,11 +70,7 @@ export default function AdminDashboard({
         <TabsTrigger className="flex-1" value="create">
           Create Post
         </TabsTrigger>
-        <TabsTrigger 
-          className="flex-1" 
-          value="edit"
-          disabled={!selectedPost}
-        >
+        <TabsTrigger className="flex-1" value="edit" disabled={!selectedPost}>
           Edit Post
         </TabsTrigger>
       </TabsList>
@@ -87,9 +86,11 @@ export default function AdminDashboard({
         // username={user.username}
       />
 
-      {/* <CreatePostTab user={user} />
+      <CreatePostTab>
+        <CreatePostForm />
+      </CreatePostTab>
 
-      <EditPostTab 
+      {/* <EditPostTab 
         selectedPost={selectedPost}
         setSelectedPost={setSelectedPost}
       /> */}
