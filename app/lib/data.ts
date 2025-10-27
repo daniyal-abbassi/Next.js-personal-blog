@@ -186,3 +186,16 @@ export async function getPreviousPost(currentPostId: number) {
     throw new Error("database Error: Failed to get previous post.");
   }
 }
+
+export async function getExistingTags() {
+  try {
+    const tags = await prisma.tag.findMany({
+      orderBy: { tag: 'asc' },
+      select: { tag_id: true, tag: true },
+    });
+    return tags;
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    return [];
+  }
+}

@@ -249,6 +249,6 @@ export async function createPost(prevState: State, formData: FormData) {
       message: "Database error: Failed to create Post.",
     };
   }
+  revalidatePath("/admin");
   revalidatePath("/posts");
-  redirect("/posts");
 }
