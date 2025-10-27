@@ -92,7 +92,7 @@ export async function authenticate(
 }
 
 // Validate Object
-export const FormSchema = z.object({
+const FormSchema = z.object({
   title: z.string().min(1, "A post cannot publish without a title."),
   content: z.string().min(1, "A post should contain something atleast!"),
   author_id: z.number(),
@@ -230,7 +230,7 @@ export async function editPost(
   redirect("/posts");
 }
 
-export type FormState = {
+type FormState = {
   errors?: {
     title?: string[];
     content?: string[];
@@ -503,5 +503,18 @@ export async function updatePostAction(
       message: error instanceof Error ? error.message : 'Failed to update post',
       success: false,
     };
+  }
+}
+
+export async function getExistingTags() {
+  try {
+    const tags = await prisma.tag.findMany({
+      orderBy: { tag: 'asc' },
+      select: { tag_id: true, tag: true },
+    });
+    return tags;
+  } catch (error) {
+    console.error('Failed to fetch tags:', error);
+    return [];
   }
 }
