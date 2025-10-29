@@ -14,6 +14,8 @@ export function AdminHeader() {
         <Link href="/admin" className="text-xl font-bold">
           Admin Dashboard
         </Link>
+
+        
         <div className="flex items-center gap-4">
           <ModeToggle />
           <form
@@ -23,6 +25,9 @@ export function AdminHeader() {
               Sign out
             </Button>
           </form>
+          <Link href="/posts" className="text-md font-bold border p-2 rounded outline">
+          Posts
+        </Link>
         </div>
       </div>
     </header>
