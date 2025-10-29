@@ -13,6 +13,7 @@ import {
   validateImageFile,
 } from '@/app/lib/uploadToCloudinary';
 import { findOrCreateTag } from "./data";
+import { requireAuth, requireOwnership } from "./auth-helper";
 
 export async function handleSignOut() {
   await signOut({ redirectTo: "/" });
@@ -120,14 +121,13 @@ type ActionResponse<T = any> =
 
 export async function deletePost(id: number): Promise<ActionResponse> {
   try {
-    const session = await auth();
+    const currentUser = await requireAuth();
 
-    if (!session?.user) {
-      return {
-        success: false,
-        error: "Unauthorized: You must be logged in to delete posts",
-      };
+    if(!currentUser) {
+      return {success: false, error: 'Please SignIn first!'}
     }
+
+
 
     const post = await prisma.post.findUnique({
       where: { post_id: id },
@@ -135,6 +135,8 @@ export async function deletePost(id: number): Promise<ActionResponse> {
     if (!post) {
       return { success: false, error: "Post Not Found!" };
     }
+    // Check for ownership
+    requireOwnership(post.author_id, currentUser);
     //delete from cloudinary
     if (post.coudinaryId) {
       try {
@@ -165,6 +167,19 @@ export async function deletePost(id: number): Promise<ActionResponse> {
 // toggle publish state
 export async function togglePublish(postId: number, isPublished:boolean): Promise<ActionResponse> {
   try {
+    const currentUser = await requireAuth();
+   
+    const currentPost = await prisma.post.findUnique({where:{post_id:postId}});
+    if(currentPost) {
+      try {
+        requireOwnership(currentPost.author_id , currentUser);
+      }catch (error) {
+        return {
+          error: error instanceof Error ? error.message : 'Forbidden',
+          success: false,
+        };
+      }
+    }
     const updatedPost = await prisma.post.update({
       where: {post_id: postId},
       data: {isPublished},
@@ -247,48 +262,13 @@ const CreatePostSchema = z.object({
   tag: z.string().min(1, 'Tag is required'),
   isPublished: z.boolean(),
 });
-// Create post function
-// export async function createPost(prevState: State, formData: FormData) {
-//   const validatedFields = CreatePost.safeParse({
-//     //this will return an object wheather success or error
-//     author_id: 1,
-//     tag_id: formData.get("tag"),
-//     title: formData.get("title"),
-//     content: formData.get("content"),
-//     isPublished: formData.get("publishStatus") === "publish" ? true : false,
-//   });
-//   if (!validatedFields.success) {
-//     return {
-//       errors: validatedFields.error.flatten().fieldErrors,
-//       message: "Check the form inputs again, something is missing!!!",
-//     };
-//   }
-//   const { author_id, tag_id, title, content, isPublished } =
-//     validatedFields.data;
-//   try {
-//     await prisma.post.create({
-//       data: {
-//         title: title,
-//         content: content,
-//         author_id: author_id,
-//         tag_id: tag_id,
-//         isPublished: isPublished,
-//         updated_at: new Date(),
-//       },
-//     });
-//   } catch (error) {
-//     return {
-//       message: "Database error: Failed to create Post.",
-//     };
-//   }
-//   revalidatePath("/admin");
-//   revalidatePath("/posts");
-// }
+
 export async function createPostAction(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
   try {
+    const currentUser = await requireAuth();
     // 2. EXTRACT & VALIDATE FORM DATA
     const rawData = {
       title: formData.get('title'),
@@ -351,7 +331,7 @@ export async function createPostAction(
         content,
         url: imageUrl,
         coudinaryId: publicId,
-        author_id: 1,
+        author_id: currentUser.user_id,
         tag_id: tagRecord.tag_id,
         isPublished,
         updated_at: new Date(),
@@ -386,10 +366,8 @@ export async function updatePostAction(
   formData: FormData
 ): Promise<FormState> {
   try {
-    // const user = await auth();
-    // if (!user) {
-    //   return { message: 'Unauthorized', success: false };
-    // }
+   
+    const currentUser = await requireAuth();
 
     // Get existing post
     const existingPost = await prisma.post.findUnique({
@@ -400,9 +378,14 @@ export async function updatePostAction(
       return { message: 'Post not found', success: false };
     }
 
-    // if (existingPost.author_id !== user.id) {
-    //   return { message: 'Forbidden', success: false };
-    // }
+    try {
+      requireOwnership(existingPost.author_id, currentUser)
+    } catch (error) {
+      return {
+        message: error instanceof Error ? error.message : 'Forbidden',
+        success: false,
+      };
+    }
 
     // Validate form data
     const rawData = {
