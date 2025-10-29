@@ -15,7 +15,6 @@ import { handleSignOut } from "@/app/lib/actions";
 
 export default async function AppAppBar(/*{ isAuth, setIsAuth }*/) {
   const session = await auth();
-
   return (
     <AppBar
       position="fixed"

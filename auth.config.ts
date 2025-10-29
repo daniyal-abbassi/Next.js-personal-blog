@@ -19,5 +19,21 @@ export const authConfig = {
             return true;
         }
     },
+    // Include custom user to token
+    async jwt({token, user}) {
+        if (user) {
+            token.id = user.user_id;
+            token.username = user.username;
+        };
+        return token;
+    },
+    // Include custom user to session as well
+    async session({session, token}) {
+        if(session.user) {
+            session.user.id = token.id as number;
+            session.user.username = token.username as string;
+        }
+        return session;
+    },
     providers: [],
 } satisfies NextAuthConfig; //typeScript type check sefaty
