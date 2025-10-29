@@ -28,7 +28,7 @@ type Props = {
   sort: string;
   order: string;
   setSelectedPost: (post: PostWithRelations) => void;
-  // username: string;
+  username: string;
 };
 
 export default function PostsTab({
@@ -39,7 +39,7 @@ export default function PostsTab({
   sort,
   order,
   setSelectedPost,
-  // username,
+  username,
 }: Props) {
   return (
     <TabsContent value="posts">
@@ -48,7 +48,7 @@ export default function PostsTab({
           <div className="space-y-2">
             <CardTitle>Posts</CardTitle>
             <CardDescription>
-              All your published & un-published posts here.
+              User {username}  - All your published & un-published posts here.
             </CardDescription>
           </div>
 

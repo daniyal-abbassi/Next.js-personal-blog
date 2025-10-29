@@ -31,6 +31,7 @@ type Props = {
   search: string;
   sort: string;
   order: string;
+  user: User;
   // setSelectedPost: (post: PostWithRelations) => void;
   // username: string;
 };
@@ -40,6 +41,7 @@ export default function AdminDashboard({
   search,
   sort,
   order,
+  user,
   // page,
   currentPage,
   totalPages,
@@ -84,7 +86,7 @@ export default function AdminDashboard({
         sort={sort}
         order={order}
         setSelectedPost={setSelectedPost}
-        // username={user.username}
+        username={user.username}
       />
 
       <CreatePostTab>
