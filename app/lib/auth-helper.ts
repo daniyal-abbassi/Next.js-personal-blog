@@ -1,8 +1,7 @@
-// app/lib/auth-helpers.ts
+// app/lib/auth-helper.ts
 import { auth } from '@/auth';
+import { prisma } from '@/app/lib/prisma';
 import type { User } from '@prisma/client';
-import { prisma } from "@/app/lib/prisma";
-
 
 /**
  * Get the authenticated user from NextAuth session
@@ -12,14 +11,15 @@ export async function getAuthUser(): Promise<User | null> {
   try {
     const session = await auth();
     
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.id) {
       return null;
     }
 
-    // NextAuth session.user might not have all User fields
-    // So we fetch the full user from database
+    // Fetch full user from database using the ID from session
     const user = await prisma.user.findUnique({
-      where: { user_id: Number(session.user.id) }, // Adjust based on your session structure
+      where: { 
+        user_id: session.user.id // ✅ FIXED: Use session.user.id (not user_id)
+      },
     });
 
     return user;
@@ -30,7 +30,8 @@ export async function getAuthUser(): Promise<User | null> {
 }
 
 /**
- * Check if user is authenticated
+ * Require authentication - throws if not authenticated
+ * @returns User object
  * @throws Error if not authenticated
  */
 export async function requireAuth(): Promise<User> {
@@ -45,12 +46,25 @@ export async function requireAuth(): Promise<User> {
 
 /**
  * Check if user owns the resource
- * @param userId - User ID from the resource
+ * @param resourceUserId - User ID from the resource (e.g., post.author_id)
  * @param currentUser - Current authenticated user
  * @throws Error if user doesn't own the resource
  */
-export function requireOwnership(userId: number, currentUser: User) {
-  if (userId !== currentUser.user_id) {
+export function requireOwnership(resourceUserId: number, currentUser: User): void {
+  if (resourceUserId !== currentUser.user_id) {
     throw new Error('Forbidden: You can only modify your own content');
+  }
+}
+
+/**
+ * Alternative: Get user ID directly from session (faster, no DB query)
+ */
+export async function getAuthUserId(): Promise<number | null> {
+  try {
+    const session = await auth();
+    return session?.user?.id || null;
+  } catch (error) {
+    console.error('Failed to get user ID:', error);
+    return null;
   }
 }

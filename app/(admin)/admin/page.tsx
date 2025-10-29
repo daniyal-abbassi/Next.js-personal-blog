@@ -7,6 +7,7 @@ import { getAdminPosts, getPostsCount } from '@/app/lib/data';
 import { Loader2 } from 'lucide-react';
 import { auth } from '@/auth';
 import { prisma } from '@/app/lib/prisma';
+import { requireAuth } from '@/app/lib/auth-helper';
 
 type SearchParams = {
   tab?: string;
@@ -19,18 +20,40 @@ type SearchParams = {
 export default async function AdminPage(props: {searchParams:Promise<SearchParams>} ) {
  
   const session = await auth();
+  // const session = await auth();
   
+  // console.log('=== SESSION DEBUG ===');
+  // console.log('Session:', JSON.stringify(session, null, 2));
+  // console.log('User ID:', session?.user?.id);
+  // console.log('Username:', session?.user?.username);
+  // console.log('====================');
   if (!session || !session.user) {
     redirect('/sign-in');
   }
 
+  if (!session || !session.user) {
+    console.log('No session, redirecting to sign-in');
+    redirect('/sign-in');
+  }
+
+  // Check if user.id exists
+  if (!session.user.id) {
+    console.error('Session user has no ID!');
+    redirect('/sign-in');
+  }
+
+  // 2. GET FULL USER FROM DATABASE
   const user = await prisma.user.findUnique({
     where: { user_id: session.user.id },
   });
 
+  // console.log('User from DB:', user ? `Found (${user.username})` : 'Not found');
+
   if (!user) {
+    console.error('User not found in database');
     redirect('/sign-in');
   }
+
 
   // 2. Parse params
   const prop = await props.searchParams;

@@ -1,6 +1,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { Prisma } from "@prisma/client";
 import z from "zod";
+import { requireAuth } from "./auth-helper";
 
 export async function getPosts(
   search?: string,
@@ -51,7 +52,8 @@ export async function getAdminPosts(
 ) {
   try {
     const whereClause: Prisma.PostWhereInput = {};
-
+    const currentUser = await requireAuth();
+    whereClause.author_id = currentUser.user_id;
     if (search) {
       whereClause.OR = [
         { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
