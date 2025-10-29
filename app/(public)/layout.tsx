@@ -3,6 +3,7 @@ import AppTheme from "../lib/theme/AppTheme";
 import AppAppBar from "../components/public/AppBar";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 import InitColorSchemeScript from "@mui/material/InitColorSchemeScript";
+import Footer from "../components/public/Footer";
 
 export default function PublicLayout({
   children,
@@ -23,6 +24,7 @@ export default function PublicLayout({
             >
               {children}
             </Container>
+            <Footer />
           </CssBaseline>
         </AppTheme>
       </AppRouterCacheProvider>
