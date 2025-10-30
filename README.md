@@ -3,14 +3,38 @@
 
 # Personal Blog
 
-A modern, full-featured personal blog application built with Next.js 15, featuring a rich content editor, authentication, and admin dashboard.
+This is a **learning project** aiming to build a modern, full-featured personal blog application built with Next.js 15, featuring a rich content editor, authentication, and admin dashboard.
+ 
+ >**Updated version of my old [fullStack Blog](https://github.com/daniyal-abbassi/Personal-Blog-Jamstack-TOP) built with React + Node.js
+
+## Table of Contents
+
+- [Personal Blog](#personal-blog)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [1. Clone the repository](#1-clone-the-repository)
+- [2. Install dependencies](#2-install-dependencies)
+- [3. Set up environment variables](#3-set-up-environment-variables)
+- [4. Set up the database](#4-set-up-the-database)
+- [5. Run the development server](#5-run-the-development-server)
+- [Database Schema](#database-schema)
+- [Project Structure](#project-structure)
+- [Key Features in Detail](#key-features-in-detail)
+  - [Authentication](#authentication)
+  - [Content Management](#content-management)
+  - [Responsive Design](#responsive-design)
+- [Available Scripts](#available-scripts)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
 - **Public Blog Interface**
   - Browse and read blog posts
   - Filter posts by tags
-  - Search functionality  // ...existing code...
+  - Search functionality 
   
 
 - **Admin Dashboard**
