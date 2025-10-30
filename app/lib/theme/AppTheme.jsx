@@ -1,5 +1,4 @@
 'use client';
-import PropTypes from 'prop-types';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import { inputsCustomizations } from '@/app/lib/theme/customization/inputs';
@@ -10,7 +9,7 @@ import { surfacesCustomizations } from '@/app/lib/theme/customization/surfaces';
 import { colorSchemes, typography, shadows, shape } from './themePrimitives';
 import { useMemo } from 'react';
 
-function AppTheme(props) {
+export default function AppTheme(props) {
   const { children, disableCustomTheme, themeComponents } = props;
   const theme = useMemo(() => {
     return disableCustomTheme
@@ -44,14 +43,3 @@ function AppTheme(props) {
     </ThemeProvider>
   );
 }
-
-AppTheme.propTypes = {
-  children: PropTypes.node,
-  /**
-   * This is for the docs site. You can ignore it or remove it.
-   */
-  disableCustomTheme: PropTypes.bool,
-  themeComponents: PropTypes.object,
-};
-
-export default AppTheme;
