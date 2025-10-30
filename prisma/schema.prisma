@@ -1,3 +1,49 @@
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model Comment {
+//   comment_id Int      @id @default(autoincrement())
+//   created_at DateTime @default(now())
+//   name       String?
+//   content    String?
+//   post_id    Int
+//   Post       Post     @relation(fields: [comment_id], references: [post_id], onDelete: Cascade)
+// }
+
+// model Post {
+//   post_id     Int      @id @default(autoincrement())
+//   title       String
+//   content     String?
+//   created_at  DateTime @default(now())
+//   updated_at  DateTime
+//   author_id   Int
+//   isPublished Boolean  @default(false)
+//   coudinaryId String?
+//   url         String?
+//   tag_id      Int
+//   Comment     Comment?
+//   User        User     @relation(fields: [author_id], references: [user_id])
+//   Tag         Tag      @relation(fields: [tag_id], references: [tag_id])
+// }
+
+// model Tag {
+//   tag_id Int    @id @default(autoincrement())
+//   tag    String @unique
+//   Post   Post[]
+// }
+
+// model User {
+//   user_id  Int    @id @default(autoincrement())
+//   username String
+//   password String
+//   Post     Post[]
+// }
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,23 +59,23 @@ model Comment {
   name       String?
   content    String?
   post_id    Int
-  Post       Post     @relation(fields: [comment_id], references: [post_id], onDelete: Cascade)
+  Post       Post     @relation(fields: [post_id], references: [post_id], onDelete: Cascade)
 }
 
 model Post {
-  post_id     Int      @id @default(autoincrement())
+  post_id     Int       @id @default(autoincrement())
   title       String
   content     String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
   author_id   Int
-  isPublished Boolean  @default(false)
+  isPublished Boolean   @default(false)
   coudinaryId String?
   url         String?
   tag_id      Int
-  Comment     Comment?
-  User        User     @relation(fields: [author_id], references: [user_id])
-  Tag         Tag      @relation(fields: [tag_id], references: [tag_id])
+  Comment     Comment[] 
+  User        User      @relation(fields: [author_id], references: [user_id])
+  Tag         Tag       @relation(fields: [tag_id], references: [tag_id])
 }
 
 model Tag {
