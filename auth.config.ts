@@ -36,9 +36,15 @@ export const authConfig = {
     
     // ✅ Session callback - adds data to session
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as number;
-        session.user.username = token.username as string;
+      if (token) {
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            id: token.id as number,
+            username: token.username as string,
+          },
+        };
       }
       return session;
     },

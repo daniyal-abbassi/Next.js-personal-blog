@@ -1,6 +1,11 @@
 import { Editor } from "@tinymce/tinymce-react";
 
-export default function TinyEditor({ value, onChange }) {
+type TinyEditorProps = {
+  value: string;
+  onChange: (content: string) => void;
+};
+
+export default function TinyEditor({ value, onChange }: TinyEditorProps) {
   return (
     <Editor
       apiKey="i5rsrjrwpbllzou5yuqw1rtujfjt38mah1rewmy9mqrrzq1b"

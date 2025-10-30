@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Blog
+
+A modern, full-featured personal blog application built with Next.js 15, featuring a rich content editor, authentication, and admin dashboard.
+
+## Features
+
+- **Public Blog Interface**
+  - Browse and read blog posts
+  - Filter posts by tags
+  - Search functionality
+  - Pagination for easy navigation
+  - Responsive design for all devices
+
+- **Admin Dashboard**
+  - Create, edit, and delete blog posts
+  - Rich text editor (TinyMCE)
+  - Image upload via Cloudinary
+  - Publish/unpublish posts
+  - Tag management
+  - User authentication with NextAuth
+
+- **Modern UI/UX**
+  - Material-UI components
+  - Dark/light theme toggle
+  - Responsive design
+  - Clean and professional interface
+
+## Tech Stack
+
+- **Framework:** Next.js 15.5.2 with React 19
+- **Database:** PostgreSQL with Prisma ORM
+- **Authentication:** NextAuth v5
+- **Styling:** Tailwind CSS + Material-UI
+- **Rich Text Editor:** TinyMCE
+- **Image Storage:** Cloudinary
+- **Type Safety:** TypeScript
+- **Form Management:** React Hook Form with Zod validation
+
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Cloudinary account (for image uploads)
+- pnpm (recommended) or npm
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd personal-blog
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Set up environment variables
 
-## Learn More
+Create a `.env` file in the root directory with the following variables:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/blog_db"
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Set up the database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Run Prisma migrations to create the database schema:
 
-## Deploy on Vercel
+```bash
+pnpm prisma migrate dev
+pnpm prisma generate
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 5. Run the development server
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Database Schema
+
+The application uses four main models:
+
+- **User:** Admin users with authentication credentials
+- **Post:** Blog posts with title, content, images, and publication status
+- **Tag:** Categorization tags for posts
+- **Comment:** User comments on posts (if enabled)
+
+## Project Structure
+
+```
+personal-blog/
+├── app/
+│   ├── (admin)/          # Admin-only routes
+│   ├── (auth)/           # Authentication pages
+│   ├── (public)/         # Public blog pages
+│   ├── components/       # React components
+│   ├── lib/             # Utilities and helpers
+│   └── ui/              # UI components
+├── prisma/
+│   └── schema.prisma    # Database schema
+├── public/              # Static assets
+└── types/               # TypeScript type definitions
+```
+
+## Key Features in Detail
+
+### Authentication
+
+The application uses NextAuth v5 for authentication with credentials provider. Admin users can sign in to access the dashboard.
+
+### Content Management
+
+- Rich text editing with TinyMCE
+- Image uploads stored in Cloudinary
+- Draft and publish workflow
+- Tag-based categorization
+
+### Responsive Design
+
+The application is fully responsive with:
+- Desktop admin dashboard
+- Mobile-friendly public blog
+- Adaptive navigation components
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm prisma studio` - Open Prisma Studio database GUI
+
+## Deployment
+
+### Build for production
+
+```bash
+pnpm build
+```
+
+### Deploy to Vercel
+
+The easiest way to deploy is using [Vercel](https://vercel.com):
+
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Configure environment variables
+4. Deploy
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is private and not licensed for public use.

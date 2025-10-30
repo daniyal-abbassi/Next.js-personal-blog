@@ -1,6 +1,8 @@
 import Form from "@/app/ui/create-form";
 import { getTags } from "../lib/data";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
     const tags = await getTags();
 

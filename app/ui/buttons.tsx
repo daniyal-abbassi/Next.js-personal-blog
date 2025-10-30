@@ -13,10 +13,12 @@ export  function EditPost({id}: {id : number}) {
 }
 
 export function DeletePost({id} : {id: number}) {
+    const handleDelete = async () => {
+        await deletePost(id);
+    }
 
-    const deletePostById = deletePost.bind(null,id)
     return (
-        <form action={deletePostById}>
+        <form action={handleDelete}>
             <button type="submit" className="rounded-md border hover:border-red-500 p-2 cursor-pointer">
                 <span className="sr-only"> Delete</span>
                 <TrashIcon className="w-5" />

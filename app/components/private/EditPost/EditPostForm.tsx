@@ -76,7 +76,7 @@ export default function EditPostForm({ post, setSelectedPost }: Props) {
     resolver: zodResolver(EditPostSchema),
     defaultValues: {
       title: post.title,
-      content: post.content,
+      content: post.content || '',
       tag: post.Tag?.tag || '',
       isPublished: post.isPublished,
       deleteImage: false,

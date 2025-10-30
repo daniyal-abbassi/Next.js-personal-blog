@@ -310,7 +310,7 @@ export async function createPostAction(
         // Upload to Cloudinary
         const uploadResult = await uploadToCloudinary(file, 'blog-posts');
         imageUrl = uploadResult.url;
-        publicId = uploadResult.coudinaryId;
+        publicId = uploadResult.public_id;
       } catch (error) {
         return {
           errors: {
