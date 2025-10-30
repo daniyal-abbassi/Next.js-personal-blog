@@ -8,7 +8,7 @@ type TinyEditorProps = {
 export default function TinyEditor({ value, onChange }: TinyEditorProps) {
   return (
     <Editor
-      apiKey="i5rsrjrwpbllzou5yuqw1rtujfjt38mah1rewmy9mqrrzq1b"
+      apiKey="wmyc1y00b3dpkmjczhrtw15q2auki9lttyl28jq8add1vcr1"
       value={value}
       onEditorChange={onChange}
       init={{
