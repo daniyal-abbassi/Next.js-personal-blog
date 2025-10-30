@@ -28,9 +28,7 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
               name="tag"
               id="tag"
               className="block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500 peer"
-              defaultValue={tags.find((tag) =>
-                tag.tag_id === post.tag_id ? tag.tag : "Null"
-              )}
+              defaultValue={post.tag_id}
               aria-describedby="tag-error"
             >
               <option value="" disabled>
@@ -82,7 +80,7 @@ export default function Form({ tags, post }: { tags: Tag[]; post: Post }) {
           </label>
           <div className="relative">
             <textarea
-              defaultValue={post.content}
+              defaultValue={post.content || ''}
               name="content"
               id="content"
               className="border border-gray-200 rounded-md p-4 w-full text-sm outline-1"

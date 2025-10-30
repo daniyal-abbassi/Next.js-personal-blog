@@ -54,7 +54,6 @@ export const { auth, signIn, signOut } = NextAuth({
               id: user.user_id.toString(),
               user_id: user.user_id,
               username: user.username,
-              email: user.email || null,
             };
           }
         }

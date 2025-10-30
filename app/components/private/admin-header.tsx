@@ -25,7 +25,7 @@ export function AdminHeader() {
               Sign out
             </Button>
           </form>
-          <Link href="/posts" className="text-md font-bold border p-2 rounded outline">
+          <Link href="/" className="text-md font-bold border p-2 rounded outline">
           Posts
         </Link>
         </div>

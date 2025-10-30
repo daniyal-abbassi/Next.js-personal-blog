@@ -1,14 +1,25 @@
 "use client";
 import { Tag } from "@prisma/client";
-import { createPost, State } from "../lib/actions";
+import { createPostAction } from "../lib/actions";
 import { useActionState } from "react";
 interface FormProps {
   tags: Tag[];
 }
 
+type State = {
+  errors?: {
+    title?: string[];
+    content?: string[];
+    tag?: string[];
+    file?: string[];
+    isPublished?: string[];
+  };
+  message?: string | null;
+};
+
 export default function Form({ tags }: FormProps) {
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState(createPost, initialState);
+  const [state, formAction] = useActionState(createPostAction, initialState);
 
     return (
     <form action={formAction}>
@@ -40,8 +51,8 @@ export default function Form({ tags }: FormProps) {
             </select>
           </div>
           <div id="tag-error" aria-live="polite" aria-atomic="true">
-            {state.errors?.tag_id &&
-              state.errors.tag_id.map((error: string) => (
+            {state.errors?.tag &&
+              state.errors.tag.map((error: string) => (
                 <p className="mt-2 text-sm text-red-500">{error}</p>
               ))}
           </div>

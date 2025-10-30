@@ -153,7 +153,7 @@ export async function deletePost(id: number): Promise<ActionResponse> {
       },
     });
     revalidatePath("/admin");
-    revalidatePath("/posts");
+    revalidatePath("/");
     return { success: true, data: post };
   } catch (error) {
     console.error("Delete post error:", error);
@@ -241,8 +241,8 @@ export async function editPost(
       message: "Database error: Failed to update the Post.",
     };
   }
-  revalidatePath("/posts");
-  redirect("/posts");
+  revalidatePath("/");
+  redirect("/");
 }
 
 type FormState = {
@@ -310,7 +310,7 @@ export async function createPostAction(
         // Upload to Cloudinary
         const uploadResult = await uploadToCloudinary(file, 'blog-posts');
         imageUrl = uploadResult.url;
-        publicId = uploadResult.coudinaryId;
+        publicId = uploadResult.public_id;
       } catch (error) {
         return {
           errors: {
