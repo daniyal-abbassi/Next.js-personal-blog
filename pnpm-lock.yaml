@@ -128,9 +128,6 @@ importers:
       react-hook-form:
         specifier: ^7.65.0
         version: 7.65.0(react@19.1.0)
-      styles:
-        specifier: link:@mui/material/styles
-        version: link:@mui/material/styles
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -150,6 +147,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.13
+      '@types/bcrypt':
+        specifier: ^6.0.0
+        version: 6.0.0
       '@types/node':
         specifier: ^20
         version: 20.19.13
@@ -1335,6 +1335,9 @@ packages:
     peerDependenciesMeta:
       tinymce:
         optional: true
+
+  '@types/bcrypt@6.0.0':
+    resolution: {integrity: sha512-/oJGukuH3D2+D+3H4JWLaAsJ/ji86dhRidzZ/Od7H/i8g+aCmvkeCc6Ni/f9uxGLSQVCRZkX2/lqEFG2BvWtlQ==}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -3898,6 +3901,10 @@ snapshots:
       prop-types: 15.8.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+
+  '@types/bcrypt@6.0.0':
+    dependencies:
+      '@types/node': 20.19.13
 
   '@types/estree@1.0.8': {}
 
