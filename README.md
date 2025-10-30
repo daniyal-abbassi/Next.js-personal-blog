@@ -5,7 +5,7 @@
 
 This is a **learning project** aiming to build a modern, full-featured personal blog application built with Next.js 15, featuring a rich content editor, authentication, and admin dashboard.
  
- >**Updated version of my old [fullStack Blog](https://github.com/daniyal-abbassi/Personal-Blog-Jamstack-TOP) built with React + Node.js
+ >**Updated version** of my old [FullStack-JAMStack Blog](https://github.com/daniyal-abbassi/Personal-Blog-Jamstack-TOP) built with **React + Node.js**
 
 ## Table of Contents
 
