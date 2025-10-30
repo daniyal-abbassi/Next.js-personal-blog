@@ -79,7 +79,7 @@ importers:
         version: 1.2.15(@types/react-dom@19.1.9(@types/react@19.1.12))(@types/react@19.1.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tinymce/tinymce-react':
         specifier: ^6.3.0
-        version: 6.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 6.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tinymce@8.2.0)
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -134,6 +134,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.13)
+      tinymce:
+        specifier: ^8.2.0
+        version: 8.2.0
       use-debounce:
         specifier: ^10.0.6
         version: 10.0.6(react@19.1.0)
@@ -2631,6 +2634,9 @@ packages:
   tinyexec@1.0.1:
     resolution: {integrity: sha512-5uC6DDlmeqiOwCPmK9jMSdOuZTh8bU39Ys6yidB+UTt5hfZUPGAypSgFRiEp+jbi9qH40BLDvy85jIU88wKSqw==}
 
+  tinymce@8.2.0:
+    resolution: {integrity: sha512-HZasRaAYQmePi+jjP4YFqHMtBJvbUaxDmjlXNf96uuyqsH6zZkGtJiFpsNi80Ec+L+snyF0OTDjrWVYDbkUrgQ==}
+
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
@@ -3896,11 +3902,13 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.1.13
 
-  '@tinymce/tinymce-react@6.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@tinymce/tinymce-react@6.3.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tinymce@8.2.0)':
     dependencies:
       prop-types: 15.8.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      tinymce: 8.2.0
 
   '@types/bcrypt@6.0.0':
     dependencies:
@@ -5373,6 +5381,8 @@ snapshots:
       yallist: 5.0.0
 
   tinyexec@1.0.1: {}
+
+  tinymce@8.2.0: {}
 
   tslib@2.8.1: {}
 
