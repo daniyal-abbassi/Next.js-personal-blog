@@ -1,3 +1,6 @@
+  [![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org) [![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactjs.org) [![Prisma](https://img.shields.io/badge/Prisma-6.15.0-2CB9E6?style=flat-square&logo=prisma&logoColor=white)](https://www.prisma.io) [![NextAuth](https://img.shields.io/badge/NextAuth-5.0.0_beta.29-4B5563?style=flat-square)](https://next-auth.js.org) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org) [![MUI](https://img.shields.io/badge/MUI-7.3.4-007FFF?style=flat-square&logo=mui&logoColor=white)](https://mui.com)
+  
+
 # Personal Blog
 
 A modern, full-featured personal blog application built with Next.js 15, featuring a rich content editor, authentication, and admin dashboard.
@@ -7,9 +10,8 @@ A modern, full-featured personal blog application built with Next.js 15, featuri
 - **Public Blog Interface**
   - Browse and read blog posts
   - Filter posts by tags
-  - Search functionality
-  - Pagination for easy navigation
-  - Responsive design for all devices
+  - Search functionality  // ...existing code...
+  
 
 - **Admin Dashboard**
   - Create, edit, and delete blog posts
@@ -46,16 +48,7 @@ A modern, full-featured personal blog application built with Next.js 15, featuri
 # Personal Blog
 this is the learning  next.js version of same app build in jamstack style react for frontend and node.js express.js for backend, old repository: https://github.com/daniyal-abbassi/Personal-Blog-Jamstack-TOP
 
-<<<<<<< HEAD
-table of content
 
-screenshots
-
-features
-
-used libraries for public page and private panel
-
-=======
 ### 1. Clone the repository
 
 ```bash
@@ -178,4 +171,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is private and not licensed for public use.
->>>>>>> 9fac5ff6097c9124908378b97f5a4d330d02afce
+
