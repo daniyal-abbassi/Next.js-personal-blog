@@ -13,21 +13,10 @@ This is a **learning project** aiming to build a modern, full-featured personal 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
-- [1. Clone the repository](#1-clone-the-repository)
-- [2. Install dependencies](#2-install-dependencies)
-- [3. Set up environment variables](#3-set-up-environment-variables)
-- [4. Set up the database](#4-set-up-the-database)
-- [5. Run the development server](#5-run-the-development-server)
 - [Database Schema](#database-schema)
 - [Project Structure](#project-structure)
 - [Key Features in Detail](#key-features-in-detail)
-  - [Authentication](#authentication)
-  - [Content Management](#content-management)
-  - [Responsive Design](#responsive-design)
-- [Available Scripts](#available-scripts)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Features
 
